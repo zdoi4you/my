@@ -349,6 +349,7 @@ input[type=password],input[type=email],input[type=tel]{font:inherit;font-size:16
 .hdr-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .lock-now{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:12.5px;font-weight:600;border-radius:999px;padding:6px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;min-height:32px}
 .lock-now svg{width:14px;height:14px}
+.lock-now.warn{color:var(--warn);background:var(--warn-bg);border-color:var(--warn)}
 /* ---------- движение ---------- */
 header.band{overflow:hidden}
 header.band::before{content:"";position:absolute;inset:-40% -10%;background:radial-gradient(40% 60% at 15% 30%,color-mix(in srgb,var(--blue) 14%,transparent),transparent 70%),radial-gradient(35% 55% at 85% 70%,color-mix(in srgb,var(--navy) 12%,transparent),transparent 70%);pointer-events:none;z-index:0}
@@ -561,6 +562,7 @@ footer{border-top
       <div class="hdr-actions">
         <button class="prof-link" type="button" id="prof-jump"><span id="prof-jump-text">Профил: не е попълнен</span></button>
         <button class="lock-now" type="button" id="lock-now" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Заключи</button>
+        <button class="lock-now" type="button" id="gs-pill" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.2M3 12a9 9 0 0 1 15.5-6.2"/><path d="M21 4v5h-5M3 20v-5h5"/></svg><span id="gs-pill-t">Google</span></button>
       </div>
     </div>
     <div class="hdr-side">
@@ -975,9 +977,9 @@ footer{border-top
 
   <div class="view" data-view="profil" hidden>
   <section class="panel courtpanel" id="court">
-    <div class="login-box">
-      <div class="login-text"><b>Вход и синхронизация – скоро</b><span>Ще можете да влезете с Google акаунт и профилът, преписките, субектите и генерираните заявления ще се пазят в Google таблица във вашия собствен Google Drive, достъпна от всяко устройство. Дотогава данните остават само в този браузър.</span></div>
-      <button class="btn" type="button" disabled aria-disabled="true">Вход с Google</button>
+    <div class="login-box" id="gs-box">
+      <div class="login-text" aria-live="polite"><b id="gs-title">Вход и синхронизация с Google</b><span id="gs-text">Влезте с Google акаунт и профилът, преписките, субектите и генерираните заявления ще се пазят в Google таблица във вашия собствен Google Drive, достъпна от всяко устройство.</span></div>
+      <div class="actions"><button class="btn primary" type="button" id="gs-in">Вход с Google</button><button class="btn primary" type="button" id="gs-now" hidden>Синхронизирай</button><a class="btn" id="gs-open" href="#" target="_blank" rel="noopener" hidden>Отвори таблицата</a><button class="btn" type="button" id="gs-out" hidden>Изход</button></div>
     </div>
     <div class="court-grid">
       <div class="court-form">
@@ -1068,7 +1070,7 @@ footer{border-top
     <div><span class="eyebrow">Настройки</span><h2>Защита с парола</h2></div>
     <div>
       <div class="court-form" id="lock-cfg">
-        <p class="lead" style="margin:0">Защитете преписките и профила си с парола. Те се шифроват в браузъра. Ако забравите паролата, единственият начин е да изтриете данните на това устройство.</p>
+        <p class="lead" style="margin:0">Защитете преписките и профила си с парола. Те се шифроват в браузъра. Ако забравите паролата, единственият начин е да изтриете данните на това устройство. При синхронизация с Google таблицата също се шифрова и на другите устройства се отключва със същата парола.</p>
         <div class="lockstate"><span class="chip info" id="lock-chip">Не е включено</span></div>
         <div id="lock-set" class="court-form">
           <div class="row2">
@@ -1118,6 +1120,7 @@ footer{border-top
     <div><span class="eyebrow">Трети страни</span><h2>Външни услуги</h2></div>
     <ul class="rules">
       <li>Шрифтът е вграден в страницата и не се зарежда от Google Fonts или други външни сървъри.</li>
+      <li>Вход с Google (по желание). Библиотеката за вход се зарежда от accounts.google.com, когато отворите „Моят профил“ или вече сте свързани. Ако влезете, данните се записват в Google таблица във вашия Google Drive чрез Google Sheets API и Google Drive API. Приложението има достъп само до таблицата, която само създава, и до имейла на акаунта. Ние не получаваме данните. За тях важат правилата на Google. Ако сте включили заключване с парола, в таблицата се пазят само шифровани данни.</li>
       <li>Библиотеката за създаване на PDF (jsPDF) се зарежда от cdnjs.cloudflare.com. При зареждането Cloudflare получава IP адреса ви, както при всяко посещение на сайт. Не се изпращат бисквитки и въведени данни.</li>
       <li>Връзките към ССЕВ, платформата за достъп до обществена информация и сайтовете на органите се отварят в нов раздел и за тях важат техните правила.</li>
       <li>Хостинг доставчикът на сайта може да води технически записи за достъпа (например IP адрес и време на заявката) съгласно своите правила.</li>
@@ -1131,7 +1134,7 @@ footer{border-top
       <button class="btn" type="button" id="pv-terms">Условия за ползване</button>
       <button class="btn danger" type="button" id="pv-withdraw">Оттегли съгласието и изтрий данните</button>
     </div>
-    <p class="hint">Оттеглянето изтрива бисквитките, профила, преписките, субектите, генерираните заявления и паролата за заключване на това устройство. След това приложението не може да се използва, докато не приемете условията отново.</p>
+    <p class="hint">Оттеглянето изтрива бисквитките, профила, преписките, субектите, генерираните заявления и паролата за заключване на това устройство и прекратява връзката с Google. Таблицата в Google Drive не се изтрива – можете да я изтриете от Google Drive. След това приложението не може да се използва, докато не приемете условията отново.</p>
   </section>
   </div>
 </main>
@@ -1143,7 +1146,7 @@ footer{border-top
         <img src="data:image/webp;base64,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" alt="Емблема на Сдружение „Просвета за демокрация“" width="40" height="40">
         <div><b>My ЗДОИ4You</b><span>Твоят път към обществената информация</span></div>
       </div>
-      <p>Проект на Сдружение „Просвета за демокрация“. Данните остават във вашия браузър – не ги получаваме и не водим логове.</p>
+      <p>Проект на Сдружение „Просвета за демокрация“. Данните остават във вашия браузър и по ваш избор във вашия Google Drive – не ги получаваме и не водим логове.</p>
       <a class="foot-link" href="https://www.zdoi4you.eu" target="_blank" rel="noopener">www.zdoi4you.eu</a>
     </div>
     <nav class="foot-col" aria-label="Правна информация">
@@ -1492,6 +1495,7 @@ function readProfile(){
   return null;
 }
 function writeProfile(o){
+  gsDirty();
   if(typeof lockOn==="function"&&lockOn()){deleteProfile();writeVault();return}
   if(!hasConsent())return;
   store.set(PK,JSON.stringify(o));
@@ -1594,7 +1598,7 @@ function giveConsent(prefs){const v="v2:"+(prefs?1:0);try{document.cookie=CK+"="
 function dropPrefs(){["zdoi4you_theme","zdoi4you_tz"].forEach(k=>{try{document.cookie=k+"=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del(k)});store.del("zdoi4you_a11y")}
 function withdrawConsent(){try{document.cookie=CK+"=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del(CK);store.del("zdoi4you_consent_at");store.del("zdoi4you-nerabotni");store.del("zdoi4you-srokove");deleteProfile();try{document.cookie="zdoi4you_tz=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del("zdoi4you_tz");try{document.cookie="zdoi4you_theme=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del("zdoi4you_theme");store.del("zdoi4you_apps");["zdoi4you_vault","zdoi4you_lock","zdoi4you_personal","zdoi4you_autolock","zdoi4you_a11y","zdoi4you_bodies","zdoi4you_gens"].forEach(k=>store.del(k))}
 const FIELDS=["h-extra","h-work"];
-function save(){if(!hasConsent())return;const o={};FIELDS.forEach(id=>o[id]=$(id).value);store.set("zdoi4you-nerabotni",JSON.stringify(o))}
+function save(){if(!hasConsent())return;const o={};FIELDS.forEach(id=>o[id]=$(id).value);const s=JSON.stringify(o);if(s!==store.get("zdoi4you-nerabotni")){store.set("zdoi4you-nerabotni",s);gsDirty()}}
 
 fillSelect($("a-kind"),APK);
 $("c-obl").innerHTML='<option value="">— изберете област —</option>'+OBL.map(o=>`<option value="${o[0]}">${esc(o[1])}</option>`).join("");
@@ -1700,7 +1704,7 @@ document.querySelectorAll("[data-theme-set]").forEach(b=>b.addEventListener("cli
 const AK="zdoi4you_apps";
 let apps=[],editId=null;
 function loadApps(){try{const a=JSON.parse(store.get(AK)||"[]");apps=Array.isArray(a)?a.filter(x=>x&&x.id):[]}catch(e){apps=[]}}
-function saveApps(){if(!hasConsent())return;if(lockOn()){writeVault();return}store.set(AK,JSON.stringify(apps))}
+function saveApps(){if(!hasConsent())return;gsDirty();if(lockOn()){writeVault();return}store.set(AK,JSON.stringify(apps))}
 function clarPaused(a){return a.clarmode==="resp"&&!!a.clarn&&!a.clard&&!a.dec}
 function decEnd(a){const start=(a.clarmode==="resp"&&a.clard)?parseISO(a.clard):parseISO(a.reg);return term(start,14+(+a.ext||0),"d").end}
 function appTerms(a){
@@ -1824,7 +1828,7 @@ let clearArm=null;
 $("apps-clear").addEventListener("click",()=>{
   const b=$("apps-clear");
   if(!clearArm){clearArm=setTimeout(()=>{clearArm=null;b.textContent="Изтрий всички преписки"},3500);b.textContent="Потвърди: изтрий всички";return}
-  clearTimeout(clearArm);clearArm=null;b.textContent="Изтрий всички преписки";apps=[];store.del(AK);renderApps();
+  clearTimeout(clearArm);clearArm=null;b.textContent="Изтрий всички преписки";apps=[];saveApps();renderApps();
 });
 $("ap-filter").addEventListener("change",e=>{e.stopPropagation();renderApps()});
 
@@ -1868,7 +1872,7 @@ function attachPlaceAC(p,onPick){
 const eikOk=v=>!v||/^(\d{9}|\d{13})$/.test(v);
 function fillPersonal(){for(const[k,id]of Object.entries(PDF))$(id).value=personal[k]||"";if(!personal.a&&personal.addr)personal.a={street:personal.addr};writeAddr("pd-a",personal.a);const other=!!(personal.a&&!personal.a.same&&(personal.a.ek||personal.a.city));$("pd-a-other").checked=other;$("pd-a-citybox").hidden=!other;updateHello()}
 function updateHello(){const n=(personal.name||"").trim();$("hello").textContent=n?"Здравейте, "+n.split(/\s+/)[0]+"!":"My ЗДОИ4You · приложение за заявители"}
-function savePersonal(){if(!hasConsent())return;if(lockOn()){writeVault();return}if(Object.values(personal).some(v=>v&&(typeof v!=="object"||Object.values(v).some(Boolean))))store.set(PDK,JSON.stringify(personal));else store.del(PDK)}
+function savePersonal(){if(!hasConsent())return;gsDirty();if(lockOn()){writeVault();return}if(Object.values(personal).some(v=>v&&(typeof v!=="object"||Object.values(v).some(Boolean))))store.set(PDK,JSON.stringify(personal));else store.del(PDK)}
 function pdMsg(m){}
 
 
@@ -1896,7 +1900,7 @@ function updateLockUI(){
   const on=lockOn();
   $("lock-chip").textContent=on?"Включено – данните са шифровани":"Не е включено";$("lock-chip").className="chip "+(on?"ok":"info");
   $("lk-save").textContent=on?"Смени паролата":"Включи заключването";$("lk-p1-label").textContent=on?"Нова парола":"Парола";
-  $("lock-actions").hidden=!on;$("lock-now").hidden=!on;
+  $("lock-actions").hidden=!on;$("lock-now").hidden=!on;gsUI();
 }
 function lkErr(m){$("lk-err").textContent=m;$("lk-err").hidden=!m}
 $("lk-save").addEventListener("click",async()=>{
@@ -1906,13 +1910,13 @@ $("lk-save").addEventListener("click",async()=>{
   if(p1!==p2)return lkErr("Паролите не съвпадат.");
   if(!(window.crypto&&crypto.subtle))return lkErr("Браузърът не поддържа шифроване.");
   lkErr("");$("lk-save").disabled=true;
-  try{await enableLock(p1);$("lk-p1").value="";$("lk-p2").value="";updateLockUI();lkErr("");pdMsg("")}catch(e){lkErr("Грешка при шифроването. Опитайте отново.")}
+  try{await enableLock(p1);gsDirty();$("lk-p1").value="";$("lk-p2").value="";updateLockUI();lkErr("");pdMsg("")}catch(e){lkErr("Грешка при шифроването. Опитайте отново.")}
   $("lk-save").disabled=false;
 });
 let offArm=false;
 $("lk-off").addEventListener("click",()=>{
   if(!offArm){offArm=true;$("lk-off").textContent="Потвърди: изключи и дешифрирай";setTimeout(()=>{offArm=false;$("lk-off").textContent="Изключи заключването"},3500);return}
-  offArm=false;$("lk-off").textContent="Изключи заключването";disableLock();updateLockUI();
+  offArm=false;$("lk-off").textContent="Изключи заключването";disableLock();updateLockUI();gsDirty();
 });
 function setLocked(on){
   document.documentElement.classList.toggle("locked",on);
@@ -1931,7 +1935,7 @@ $("lock-form").addEventListener("submit",async e=>{
     const key=await derive($("lock-pw").value,unb64(info.salt));
     const v=JSON.parse(store.get(VK)||"null");const data=v?await unseal(key,v):{apps:[],personal:{}};
     ckey=key;apps=Array.isArray(data.apps)?data.apps:[];personal=data.personal||{};profile=data.profile||null;bodies=Array.isArray(data.bodies)?data.bodies:[];gens=Array.isArray(data.gens)?data.gens:[];renderBodies();renderGens();applyProfile(profile);setEditing(!profile);render();fails=0;
-    fillPersonal();renderApps();setLocked(false);armAuto();
+    fillPersonal();renderApps();setLocked(false);armAuto();gsAfterUnlock();
   }catch(err){
     fails++;if(fails>=5){waitUntil=Date.now()+30000;fails=0}
     $("lock-err").textContent="Грешна парола.";$("lock-err").hidden=false;$("lock-pw").select();
@@ -1944,7 +1948,7 @@ $("lock-wipe").addEventListener("click",()=>{
   if(!wipeArm2){wipeArm2=true;$("lock-wipe").textContent="Потвърди: изтрий всичко";setTimeout(()=>{wipeArm2=false;$("lock-wipe").textContent="Изтрий локалните данни"},4000);return}
   wipeArm2=false;$("lock-wipe").textContent="Изтрий локалните данни";
   [VK,LK,AK,PDK,BK,GK,"zdoi4you-nerabotni"].forEach(k=>store.del(k));bodies=[];gens=[];curGen=null;renderGens();renderBodies();deleteProfile();
-  ckey=null;apps=[];personal={};profile=null;applyProfile(null);setEditing(true);fillPersonal();renderApps();updateLockUI();setLocked(false);render();
+  gsOff();ckey=null;apps=[];personal={};profile=null;applyProfile(null);setEditing(true);fillPersonal();renderApps();updateLockUI();setLocked(false);render();
 });
 /* автоматично заключване */
 let autoTimer=null;
@@ -2004,7 +2008,7 @@ function showView(){
   const cur=document.querySelector(`[data-nav="${v}"]`);if(cur&&cur.scrollIntoView)cur.scrollIntoView({block:"nearest",inline:"center"});
   if(v==="nachalo")renderHome();
   if(v==="generator")genEnter();
-  if(v==="poveritelnost")renderPrivacy();
+  if(v==="poveritelnost")renderPrivacy();if(v==="profil")gsPre();
   if(changed)window.scrollTo({top:0,behavior:"auto"});
   updateBar();
 }
@@ -2014,7 +2018,7 @@ window.addEventListener("hashchange",showView);
 const BK="zdoi4you_bodies";
 let bodies=[],bEdit=null;
 function loadBodies(){try{const a=JSON.parse(store.get(BK)||"[]");bodies=Array.isArray(a)?a.filter(x=>x&&x.name):[]}catch(e){bodies=[]}}
-function saveBodies(){if(!hasConsent())return;if(lockOn()){writeVault();return}if(bodies.length)store.set(BK,JSON.stringify(bodies));else store.del(BK)}
+function saveBodies(){if(!hasConsent())return;gsDirty();if(lockOn()){writeVault();return}if(bodies.length)store.set(BK,JSON.stringify(bodies));else store.del(BK)}
 const BF={name:"b-name",head:"b-head",addr:"b-addr",email:"b-email",eik:"b-eik",phone:"b-phone",web:"b-web",note:"b-note"};
 function fillBodyForm(b){for(const[k,id]of Object.entries(BF))$(id).value=b?b[k]||"":"";$("b-ssev").checked=!!(b&&b.ssev);$("b-pitay").checked=!!(b&&b.pitay)}
 function bMsg(m){$("b-msg").textContent=m;$("b-msg").hidden=false;setTimeout(()=>$("b-msg").hidden=true,2200)}
@@ -2272,7 +2276,7 @@ $("g-pdf").addEventListener("click",async()=>{
 /* ---------- генерирани заявления ---------- */
 const GK="zdoi4you_gens";let gens=[],curGen=null;
 function loadGens(){try{const a=JSON.parse(store.get(GK)||"[]");gens=Array.isArray(a)?a:[]}catch(e){gens=[]}}
-function saveGens(){if(!hasConsent())return;if(lockOn()){writeVault();return}if(gens.length)store.set(GK,JSON.stringify(gens));else store.del(GK)}
+function saveGens(){if(!hasConsent())return;gsDirty();if(lockOn()){writeVault();return}if(gens.length)store.set(GK,JSON.stringify(gens));else store.del(GK)}
 function storeGen(){
   const m=genModel();const form=getGenForm();const now=new Date().toISOString();
   const clar=m.kind==="clar";
@@ -2347,6 +2351,8 @@ const CK_LIST=[
  ["zdoi4you_apps, zdoi4you_bodies, zdoi4you_gens","Хранилище","Преписки, задължени субекти и генерирани заявления","До изтриване","Необходима"],
  ["zdoi4you_lock, zdoi4you_vault, zdoi4you_autolock","Хранилище","Заключване с парола и шифровани данни","До изтриване","Необходима"],
  ["zdoi4you-nerabotni","Хранилище","Добавените от вас неработни дни","До изтриване","Необходима"],
+ ["zdoi4you_gsync","Хранилище","Връзка с Google: имейл на акаунта, идентификатор на таблицата и състояние на синхронизацията","До изход от Google","Необходима"],
+ ["zdoi4you_gtoken","Хранилище за сесията","Временен ключ за достъп до Google Drive","До 1 час или затваряне на раздела","Необходима"],
  ["zdoi4you_theme","Бисквитка","Избраната тема","12 месеца","Предпочитания"],
  ["zdoi4you_tz","Бисквитка","Избраната часова зона","12 месеца","Предпочитания"],
  ["zdoi4you_a11y","Хранилище","Размер на текста и настройки за достъпност","До изтриване","Предпочитания"]
@@ -2375,13 +2381,13 @@ function applyChoice(prefs){
     try{const h=JSON.parse(store.get("zdoi4you-nerabotni")||"null");if(h){FIELDS.forEach(id=>{if(h[id])$(id).value=h[id]});loadExtras();renderHolidays()}}catch(e){}
     save();render();if(currentView==="nachalo")renderHome();
   }
-  hideGate();renderPrivacy();
+  hideGate();renderPrivacy();gsUI();
 }
 $("gate-ok").addEventListener("change",()=>{if($("gate-ok").checked)$("gate-err").hidden=true});
 $("ck-all").addEventListener("click",()=>{$("ck-prefs").checked=true;applyChoice(true)});
 $("ck-reject").addEventListener("click",()=>{$("ck-prefs").checked=false;applyChoice(false)});
 $("ck-save").addEventListener("click",()=>applyChoice($("ck-prefs").checked));
-function doWithdraw(){withdrawConsent();dropPrefs();a11y={size:100,spacing:false,links:false,cursor:false,motion:false};applyA11y();ckey=null;bodies=[];gens=[];curGen=null;renderGens();renderBodies();personal={};fillPersonal();updateLockUI();apps=[];renderApps();applyTheme("auto");profile=null;applyProfile(null);setEditing(true);$("h-extra").value="";$("h-work").value="";loadExtras();renderHolidays();render();updateConsentUI();renderPrivacy();showGate(false)}
+function doWithdraw(){gsOff();withdrawConsent();dropPrefs();a11y={size:100,spacing:false,links:false,cursor:false,motion:false};applyA11y();ckey=null;bodies=[];gens=[];curGen=null;renderGens();renderBodies();personal={};fillPersonal();updateLockUI();apps=[];renderApps();applyTheme("auto");profile=null;applyProfile(null);setEditing(true);$("h-extra").value="";$("h-work").value="";loadExtras();renderHolidays();render();updateConsentUI();renderPrivacy();showGate(false)}
 let wdArm=null;
 function armWithdraw(btn,label,fn){if(!wdArm){btn.textContent="Потвърди: изтрий всичко";wdArm=setTimeout(()=>{wdArm=null;btn.textContent=label},4000);return}clearTimeout(wdArm);wdArm=null;btn.textContent=label;fn()}
 $("withdraw").addEventListener("click",()=>armWithdraw($("withdraw"),"Оттегли съгласието",doWithdraw));
@@ -2402,6 +2408,214 @@ $("pv-prefs").addEventListener("change",e=>{
   updateConsentUI();renderPrivacy();
 });
 $("sup-copy").addEventListener("click",()=>{const v="support@zdoi4you.eu";const b=$("sup-copy");const done=()=>{b.textContent="Копирано";setTimeout(()=>b.textContent="Копирай",1600)};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v).then(done).catch(()=>{const r=document.createRange();r.selectNodeContents($("sup-mail"));const s=getSelection();s.removeAllRanges();s.addRange(r)});else{const r=document.createRange();r.selectNodeContents($("sup-mail"));const s=getSelection();s.removeAllRanges();s.addRange(r)}});
+/* ---------- вход с Google и синхронизация с Google таблица ---------- */
+/* Данните се пазят в таблица във вашия Google Drive. Приложението има достъп само до файловете, които само създава (drive.file). */
+const GS_CLIENT="838853307992-dv64og2iil0q6fqjgu293006ulc50r5q.apps.googleusercontent.com";
+const GS_SCOPE="https://www.googleapis.com/auth/drive.file";
+const GSK="zdoi4you_gsync",GSTK="zdoi4you_gtoken";
+const GS_TABS=["Преписки","Субекти","Заявления","Профил"],GS_SYNC="_sync";
+const GS_SH="https://sheets.googleapis.com/v4/spreadsheets",GS_DR="https://www.googleapis.com/drive/v3/files";
+const gsNoKnown=()=>({a:[],b:[],g:[]});
+var GS={email:null,sid:null,seen:null,known:gsNoKnown(),dirty:false,ver:0,token:null,exp:0,busy:false,again:false,err:"",last:0,carry:null,applying:false,tc:null,lib:null,timer:null};
+try{const s=hasConsent()?JSON.parse(store.get(GSK)||"null"):null;if(s&&s.email)Object.assign(GS,{email:s.email,sid:s.sid||null,seen:s.seen||null,known:s.known||gsNoKnown(),dirty:!!s.dirty})}catch(e){}
+try{const t=JSON.parse(sessionStorage.getItem(GSTK)||"null");if(t&&GS.email&&t.exp>Date.now())Object.assign(GS,{token:t.t,exp:t.exp})}catch(e){}
+function gsSave(){if(!GS.email){store.del(GSK);return}if(hasConsent())store.set(GSK,JSON.stringify({email:GS.email,sid:GS.sid,seen:GS.seen,known:GS.known,dirty:GS.dirty}))}
+function gsTok(){return GS.token&&Date.now()<GS.exp-60000?GS.token:null}
+function gsCan(){return !!GS.email&&hasConsent()&&(!lockOn()||!!ckey)}
+function gsDirty(){if(!GS||!GS.email||GS.applying)return;GS.ver++;GS.dirty=true;gsSave();clearTimeout(GS.timer);GS.timer=setTimeout(gsSync,2500);gsUI()}
+function gsReady(){return !!(window.google&&google.accounts&&google.accounts.oauth2)}
+function gsLib(){
+  if(gsReady())return Promise.resolve();
+  if(!GS.lib)GS.lib=new Promise((ok,no)=>{const s=document.createElement("script");s.src="https://accounts.google.com/gsi/client";s.async=true;s.onload=ok;s.onerror=()=>{GS.lib=null;s.remove();no(new Error("lib"))};document.head.appendChild(s)});
+  return GS.lib;
+}
+function gsPre(){if(GS&&hasConsent())gsLib().catch(()=>{})}
+/* прозорецът за вход се отваря синхронно в обработчика на натискането, за да не бъде блокиран */
+function gsAuth(prompt){
+  const go=()=>new Promise((ok,no)=>{
+    if(!GS.tc)GS.tc=google.accounts.oauth2.initTokenClient({client_id:GS_CLIENT,scope:GS_SCOPE+" email",callback:r=>GS.onTok&&GS.onTok(r),error_callback:e=>GS.onErr&&GS.onErr(e)});
+    GS.onTok=r=>{
+      if(r&&r.access_token&&google.accounts.oauth2.hasGrantedAllScopes(r,GS_SCOPE)){GS.token=r.access_token;GS.exp=Date.now()+(+r.expires_in||3600)*1000;try{sessionStorage.setItem(GSTK,JSON.stringify({t:GS.token,exp:GS.exp}))}catch(e){}ok(GS.token)}
+      else no(new Error(r&&r.error?r.error:"scope"));
+    };
+    GS.onErr=e=>no(new Error(e&&e.type||"popup"));
+    const o={prompt};if(GS.email)o.login_hint=GS.email;
+    GS.tc.requestAccessToken(o);
+  });
+  return gsReady()?go():gsLib().then(go);
+}
+async function gsApi(url,opt){
+  const t=gsTok();if(!t)throw new Error("auth");
+  const r=await fetch(url,{...(opt||{}),headers:{Authorization:"Bearer "+t,"Content-Type":"application/json"}});
+  if(r.status===401){GS.token=null;try{sessionStorage.removeItem(GSTK)}catch(e){}throw new Error("auth")}
+  if(!r.ok){const e=new Error("http");e.status=r.status;throw e}
+  return r.status===204?null:r.json();
+}
+const gsQ=t=>"'"+t.replace(/'/g,"''")+"'";
+async function gsFile(){
+  if(GS.sid)return;
+  const q=encodeURIComponent("appProperties has { key='zdoi4you' and value='1' } and trashed=false");
+  const f=await gsApi(GS_DR+"?q="+q+"&fields=files(id)&orderBy=createdTime&pageSize=1&spaces=drive");
+  if(f.files&&f.files.length){GS.sid=f.files[0].id;GS.seen=null}
+  else{
+    const s=await gsApi(GS_SH,{method:"POST",body:JSON.stringify({properties:{title:"My ЗДОИ4You – преписки",locale:"bg_BG",timeZone:"Europe/Sofia"},sheets:[...GS_TABS.map(t=>({properties:{title:t,gridProperties:{frozenRowCount:1}}})),{properties:{title:GS_SYNC,hidden:true}}]})});
+    GS.sid=s.spreadsheetId;GS.seen=null;
+    await gsApi(GS_DR+"/"+GS.sid,{method:"PATCH",body:JSON.stringify({appProperties:{zdoi4you:"1"},description:"Данни от приложението My ЗДОИ4You (https://my.zdoi4you.eu). Скритият лист _sync е служебен – не го променяйте."})});
+  }
+  gsSave();
+}
+/* A1 – служебна информация, A2… – данните като JSON на части */
+async function gsRead(){
+  let r;
+  try{r=await gsApi(GS_SH+"/"+GS.sid+"/values/"+encodeURIComponent(gsQ(GS_SYNC)+"!A1:A"))}
+  catch(e){
+    if(e.status===404){GS.sid=null;GS.seen=null;await gsFile();return gsRead()}
+    if(e.status===400){await gsApi(GS_SH+"/"+GS.sid+":batchUpdate",{method:"POST",body:JSON.stringify({requests:[{addSheet:{properties:{title:GS_SYNC,hidden:true}}}]})});return null}
+    throw e;
+  }
+  const rows=(r.values||[]).map(x=>x[0]||"");
+  if(!rows[0])return null;
+  try{return{meta:JSON.parse(rows[0]),body:JSON.parse(rows.slice(1).join("")),n:rows.length}}catch(e){return null}
+}
+const gsD=iso=>iso?fmt(parseISO(iso)):"";
+function gsSheets(p){
+  if(p.enc)return GS_TABS.map(t=>({range:gsQ(t)+"!A1",values:[["Данните са шифровани с паролата за заключване. Отворете ги в приложението: https://my.zdoi4you.eu"]]}));
+  const d=p.data,cap=rows=>rows.slice(0,999);
+  const A=cap(d.apps.map(a=>{const cs=caseStatus(a),nx=appTerms(a).next;return[a.body||"",a.subj||"",cs.t,nx?nx.k+": "+fmt(nx.end):"",gsD(a.reg),a.no||"",a.out||"",VIA_L[a.via]||"",+a.ext||0,gsD(a.clarn),gsD(a.clard),gsD(a.dec),a.dec?(a.dtype==="grant"?"Предоставен достъп":"Отказ или частичен отказ"):"",gsD(a.apd),a.case||"",a.apd?(CRES[a.cres||"pending"]||CRES.pending)[0]:"",gsD(a.cdate),a.closed?"да":""]}));
+  const B=cap(d.bodies.map(b=>[b.name||"",b.head||"",b.addr||"",b.email||"",b.eik||"",b.phone||"",b.web||"",b.ssev?"да":"",b.pitay?"да":"",b.note||""]));
+  const G=cap(d.gens.map(g=>[g.kind==="clar"?"Уточнение":"Заявление",g.title||"",g.to||"",g.created?dtShort(g.created):"",g.updated?dtShort(g.updated):""]));
+  const pr=d.profile||{},pd=d.personal||{},pl=pr.e?placeBy(pr.e):null,ob=pr.o?OBL.find(x=>x[0]===pr.o):null;
+  const P=[["Заявител",pr.t==="ul"?"Юридическо лице":pr.t==="fl"?"Физическо лице":""],["Име",pd.name||""],["ЕИК / БУЛСТАТ",pd.eik||""],["Представлявано от",pd.rep||""],["Постоянен адрес / седалище",pl?placeLabel(pl):""],["Област",ob?ob[1]:""],["Компетентен съд",courtName()||""],["Имейл",pd.email||""],["Телефон",pd.phone||""],["Адрес за кореспонденция",pd.addr||""]];
+  const head=[["Субект","Предмет","Статус","Следващ срок","Дата на регистриране","Вх. №","Изх. №","Начин на подаване","Удължен срок (дни)","Уточнение поискано на","Уточнение входирано на","Решение от","Вид решение","Жалба подадена на","Дело №","Резултат от делото","Дата на определението","Приключена"],["Наименование","Адресат","Адрес","Имейл","ЕИК / БУЛСТАТ","Телефон","Сайт","ССЕВ","Платформа","Бележка"],["Вид","Заглавие","До","Създадено","Обновено"],["Поле","Стойност"]];
+  return [A,B,G,P].map((rows,i)=>({range:gsQ(GS_TABS[i])+"!A1",values:[head[i],...rows]}));
+}
+async function gsWrite(p,prevN){
+  const at=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const s=JSON.stringify(p),col=[JSON.stringify({v:1,at,app:"my.zdoi4you.eu"})];
+  for(let i=0;i<s.length;i+=40000)col.push(s.slice(i,i+40000));
+  while(col.length<prevN)col.push("");
+  await gsApi(GS_SH+"/"+GS.sid+"/values:batchClear",{method:"POST",body:JSON.stringify({ranges:GS_TABS.map(gsQ)})});
+  await gsApi(GS_SH+"/"+GS.sid+"/values:batchUpdate",{method:"POST",body:JSON.stringify({valueInputOption:"RAW",data:[{range:gsQ(GS_SYNC)+"!A1:A"+col.length,values:col.map(v=>[v])},...gsSheets(p)]})});
+  return at;
+}
+function gsLocal(){return{apps,bodies,gens,personal,profile,hol:{"h-extra":$("h-extra").value,"h-work":$("h-work").value}}}
+const gsHasPd=o=>!!o&&Object.values(o).some(v=>v&&(typeof v!=="object"||Object.values(v).some(Boolean)));
+async function gsPayload(){const d=gsLocal();return lockOn()&&ckey?{enc:true,lock:lockInfo(),vault:await seal(ckey,d)}:{enc:false,data:d}}
+async function gsOpen(p){
+  if(!p.enc)return p.data||{};
+  const li=lockInfo();
+  if(ckey&&li&&p.lock&&li.salt===p.lock.salt){try{return await unseal(ckey,p.vault)}catch(e){}}
+  return null;
+}
+/* обединяване по id: запис, който го няма от едната страна, но е бил синхронизиран, се смята за изтрит */
+function gsList(loc,rem,known,newer){
+  const K=new Set(known||[]),L=new Set(loc.map(x=>x.id)),R=new Map(rem.map(x=>[x.id,x])),out=[];
+  for(const x of loc){const r=R.get(x.id);if(!r&&K.has(x.id))continue;out.push(r&&newer&&newer(r,x)?r:x)}
+  for(const r of rem)if(r&&r.id&&!L.has(r.id)&&!K.has(r.id))out.push(r);
+  return out;
+}
+function gsMerge(l,r){
+  const k=GS.known||gsNoKnown(),lines=(a,b)=>[...new Set([...(a||"").split(/\r?\n/),...(b||"").split(/\r?\n/)].map(s=>s.trim()).filter(Boolean))].join("\n");
+  const rh=r.hol||{};
+  return{apps:gsList(l.apps,r.apps||[],k.a),bodies:gsList(l.bodies,r.bodies||[],k.b),
+    gens:gsList(l.gens,r.gens||[],k.g,(x,y)=>(x.updated||"")>(y.updated||"")).sort((x,y)=>(y.created||"").localeCompare(x.created||"")),
+    personal:gsHasPd(l.personal)?l.personal:(r.personal||{}),profile:l.profile||r.profile||null,
+    hol:{"h-extra":lines(l.hol["h-extra"],rh["h-extra"]),"h-work":lines(l.hol["h-work"],rh["h-work"])}};
+}
+function gsApply(d){
+  GS.applying=true;
+  try{
+    apps=Array.isArray(d.apps)?d.apps.filter(x=>x&&x.id):[];bodies=Array.isArray(d.bodies)?d.bodies.filter(x=>x&&x.name):[];gens=Array.isArray(d.gens)?d.gens.filter(x=>x&&x.id):[];
+    personal=d.personal&&typeof d.personal==="object"?d.personal:{};profile=d.profile&&(d.profile.t==="fl"||d.profile.t==="ul")?d.profile:null;
+    if(d.hol)FIELDS.forEach(id=>{if(typeof d.hol[id]==="string")$(id).value=d.hol[id]});
+    if(curGen&&!gens.some(g=>g.id===curGen))curGen=null;
+    saveApps();saveBodies();saveGens();savePersonal();if(profile)writeProfile(profile);else if(!lockOn())deleteProfile();save();
+    applyProfile(profile);setEditing(!profile);fillPersonal();loadExtras();renderHolidays();renderBodies();renderGens();renderApps();render();
+    if(currentView==="nachalo")renderHome();
+  }finally{GS.applying=false}
+}
+/* данните в Google са шифровани с парола, която това устройство не познава – приемаме я и искаме отключване */
+function gsAdopt(rem){
+  const l=gsLocal();GS.carry=l.apps.length||l.bodies.length||l.gens.length||gsHasPd(l.personal)||l.profile?JSON.parse(JSON.stringify(l)):null;
+  store.set(LK,JSON.stringify(rem.body.lock));store.set(VK,JSON.stringify(rem.body.vault));store.del(AK);store.del(PDK);store.del(BK);store.del(GK);deleteProfile();
+  GS.seen=rem.meta.at;GS.known=gsNoKnown();GS.dirty=false;gsSave();
+  ckey=null;updateLockUI();lockNow();
+  $("lock-err").textContent="Данните в Google са защитени с парола. Въведете паролата за заключване, зададена на другото устройство.";$("lock-err").hidden=false;
+}
+function gsAfterUnlock(){
+  if(!GS||!GS.email)return;
+  if(GS.carry){const c=GS.carry;GS.carry=null;GS.known=gsNoKnown();gsApply(gsMerge(gsLocal(),c));GS.ver++;GS.dirty=true;gsSave()}
+  gsSync();
+}
+async function gsSync(){
+  if(!GS||!gsCan()){gsUI();return}
+  if(GS.busy){GS.again=true;return}
+  if(!gsTok()){gsUI();return}
+  clearTimeout(GS.timer);GS.busy=true;GS.err="";gsUI();
+  const v0=GS.ver;let ok=false;
+  try{
+    await gsFile();
+    const rem=await gsRead();
+    if(!rem)GS.seen=await gsWrite(await gsPayload(),0);
+    else if(rem.meta.at===GS.seen){if(GS.dirty)GS.seen=await gsWrite(await gsPayload(),rem.n)}
+    else{
+      const rd=await gsOpen(rem.body);
+      if(rd===null){gsAdopt(rem);return}
+      if(GS.dirty||!GS.seen){gsApply(gsMerge(gsLocal(),rd));GS.seen=await gsWrite(await gsPayload(),rem.n)}
+      else{gsApply(rd);GS.seen=rem.meta.at}
+    }
+    ok=true;
+  }catch(e){GS.err=e.message==="auth"?"auth":e.status===403?"403":"net"}
+  finally{
+    GS.busy=false;
+    if(ok){GS.dirty=GS.ver!==v0;GS.known={a:apps.map(x=>x.id),b:bodies.map(x=>x.id),g:gens.map(x=>x.id)};GS.last=Date.now();if(GS.dirty)GS.again=true}
+    gsSave();gsUI();
+    if(GS.again){GS.again=false;GS.timer=setTimeout(gsSync,1000)}
+  }
+}
+function gsOff(){
+  if(!GS)return;clearTimeout(GS.timer);
+  Object.assign(GS,{email:null,sid:null,seen:null,known:gsNoKnown(),dirty:false,token:null,exp:0,err:"",carry:null,last:0});
+  try{sessionStorage.removeItem(GSTK)}catch(e){}store.del(GSK);gsUI();
+}
+const GS_ERR={popup_closed:"Прозорецът за вход беше затворен.",popup_failed_to_open:"Браузърът блокира прозореца за вход. Разрешете изскачащите прозорци за този сайт.",access_denied:"Не дадохте достъп.",scope:"Отбележете разрешението за Google Drive, за да работи синхронизацията.",lib:"Услугата на Google не може да се зареди. Проверете връзката.",net:"Няма връзка с Google. Ще опитаме отново.","403":"Google отказа достъп (403). В Google Cloud проекта трябва да са включени Google Sheets API и Google Drive API.",auth:"Сесията с Google е изтекла. Натиснете „Синхронизирай“."};
+function gsUI(){
+  if(!GS||!$("gs-box"))return;
+  const on=!!GS.email,tok=!!gsTok(),locked=lockOn()&&!ckey;
+  let st="";
+  if(on)st=GS.busy?"Синхронизиране…":locked?"Отключете приложението, за да синхронизирате.":GS.err?(GS_ERR[GS.err]||GS_ERR.net):!tok?GS_ERR.auth:GS.dirty?"Има промени за качване.":GS.last?"Синхронизирано в "+new Date(GS.last).toLocaleTimeString("bg-BG",{hour:"2-digit",minute:"2-digit"})+" ч.":"Свързано.";
+  $("gs-title").textContent=on?"Синхронизация с Google":"Вход и синхронизация с Google";
+  $("gs-text").textContent=on?GS.email+" · "+st:(GS.err&&GS_ERR[GS.err]?GS_ERR[GS.err]+" ":"")+"Влезте с Google акаунт и профилът, преписките, субектите и генерираните заявления ще се пазят в Google таблица във вашия собствен Google Drive, достъпна от всяко устройство. Приложението вижда само таблицата, която само създава.";
+  $("gs-in").hidden=on;$("gs-in").disabled=!hasConsent();
+  $("gs-now").hidden=!on;$("gs-now").disabled=GS.busy||locked;$("gs-out").hidden=!on;
+  $("gs-open").hidden=!(on&&GS.sid);if(GS.sid)$("gs-open").href="https://docs.google.com/spreadsheets/d/"+encodeURIComponent(GS.sid)+"/edit";
+  const pill=$("gs-pill");pill.hidden=!on;
+  $("gs-pill-t").textContent="Google: "+(GS.busy?"синхронизиране…":locked?"заключено":GS.err==="net"||GS.err==="403"?"грешка":!tok?"синхронизирай":GS.dirty?"предстои":"синхронизирано");
+  pill.classList.toggle("warn",on&&!GS.busy&&(!tok||!!GS.err));
+}
+function gsClick(){
+  if(!hasConsent())return;
+  if(gsTok()){gsSync();return}
+  gsAuth("").then(()=>{GS.err="";gsSync()}).catch(e=>{GS.err=e.message;gsUI()});
+}
+$("gs-in").addEventListener("click",()=>{
+  if(!hasConsent())return;
+  GS.err="";
+  gsAuth("select_account").then(async()=>{
+    const u=await gsApi("https://www.googleapis.com/oauth2/v3/userinfo");
+    if(!u||!u.email)throw new Error("scope");
+    if(u.email!==GS.email)Object.assign(GS,{sid:null,seen:null,known:gsNoKnown()});
+    GS.email=u.email;GS.dirty=false;gsSave();await gsSync();
+  }).catch(e=>{GS.err=e.message;gsUI()});
+});
+$("gs-now").addEventListener("click",gsClick);
+$("gs-pill").addEventListener("click",gsClick);
+$("gs-out").addEventListener("click",gsOff);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&GS.email)gsSync()});
+window.addEventListener("online",()=>{if(GS.email)gsSync()});
+setInterval(()=>{if(!document.hidden&&GS.email&&!GS.busy)gsSync()},90000);
+if(GS.email){gsLib().catch(()=>{});gsSync()}else if(currentView==="profil")gsPre();
+gsUI();
 updateConsentUI();renderPrivacy();
 if(hasConsent())hideGate();else showGate(false);
 window.__term=term;window.__holidays=holidays;
