@@ -183,6 +183,22 @@ details.box .inner{padding:0 18px 18px;display:flex;flex-direction:column;gap:14
 .login-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 300px;font-size:13.5px}
 .login-text b{color:var(--navy);font-size:14.5px}
 .login-text span{color:var(--muted)}
+.devs{display:flex;flex-direction:column;gap:8px}
+.devs[hidden]{display:none}
+.devs-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px 16px;flex-wrap:wrap}
+.devs-head div{display:flex;flex-direction:column;gap:2px;flex:1 1 280px;min-width:0}
+.devs-head b{color:var(--navy);font-size:14.5px}
+.devs-head span{color:var(--muted);font-size:13px}
+.dev{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--surface)}
+.dev.me{border-color:var(--blue)}
+.dev-ico{width:36px;height:36px;border-radius:10px;background:var(--blue-soft);color:var(--navy);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.dev-ico svg{width:20px;height:20px}
+.dev-tx{display:flex;flex-direction:column;gap:4px;flex:1 1 220px;min-width:0}
+.dev-tx b{overflow-wrap:anywhere}
+.dev-tx small{color:var(--muted);font-size:12.5px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.dev-act,.dev-ren{display:flex;gap:8px;flex-wrap:wrap}
+.dev-ren input{flex:1 1 180px;min-width:0}
+.dev-act .btn,.dev-ren .btn{min-height:34px;padding:6px 12px;font-size:13px}
 .toolbar-apps{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .toolbar-apps .addapp{flex:0 0 auto;order:0}
 .toolbar-apps .addapp[open]{flex:1 1 100%}
@@ -989,6 +1005,7 @@ footer{border-top
       <div class="login-text" aria-live="polite"><b id="gs-title">Вход и синхронизация с Google</b><span id="gs-text">Влезте с Google акаунт и профилът, преписките, субектите и генерираните заявления ще се пазят в Google таблица във вашия собствен Google Drive, достъпна от всяко устройство.</span></div>
       <div class="actions"><button class="btn primary" type="button" id="gs-in">Вход с Google</button><button class="btn primary" type="button" id="gs-now" hidden>Синхронизирай</button><a class="btn" id="gs-open" href="#" target="_blank" rel="noopener" hidden>Отвори таблицата</a><button class="btn" type="button" id="gs-out" hidden>Изход</button></div>
     </div>
+    <div class="devs" id="gs-devs" aria-live="polite" hidden></div>
     <div class="court-grid">
       <div class="court-form">
         <div class="prof-head">
@@ -2363,7 +2380,7 @@ const CK_LIST=[
  ["zdoi4you_apps, zdoi4you_bodies, zdoi4you_gens","Хранилище","Преписки, задължени субекти и генерирани заявления","До изтриване","Необходима"],
  ["zdoi4you_lock, zdoi4you_vault, zdoi4you_autolock","Хранилище","Заключване с парола и шифровани данни","До изтриване","Необходима"],
  ["zdoi4you-nerabotni","Хранилище","Добавените от вас неработни дни","До изтриване","Необходима"],
- ["zdoi4you_gsync","Хранилище","Връзка с Google: имейл на акаунта, идентификатор на таблицата и състояние на синхронизацията","До изход от Google","Необходима"],
+ ["zdoi4you_gsync","Хранилище","Връзка с Google: имейл на акаунта, идентификатор на таблицата и на устройството, име на устройството и състояние на синхронизацията","До изход от Google","Необходима"],
  ["zdoi4you_gtoken","Хранилище за сесията","Временен ключ за достъп до Google Drive","До 1 час или затваряне на раздела","Необходима"],
  ["zdoi4you_theme","Бисквитка","Избраната от вас тема","12 месеца","Необходима"],
  ["zdoi4you_tz","Бисквитка","Избраната часова зона","12 месеца","Предпочитания"],
@@ -2429,9 +2446,9 @@ const GS_TABS=["Преписки","Субекти","Заявления","Про�
 const GS_SH="https://sheets.googleapis.com/v4/spreadsheets",GS_DR="https://www.googleapis.com/drive/v3/files";
 const gsNoKnown=()=>({a:[],b:[],g:[]});
 var GS={email:null,sid:null,seen:null,known:gsNoKnown(),dirty:false,ver:0,token:null,exp:0,busy:false,again:false,err:"",last:0,carry:null,applying:false,tc:null,lib:null,timer:null};
-try{const s=hasConsent()?JSON.parse(store.get(GSK)||"null"):null;if(s&&s.email)Object.assign(GS,{email:s.email,sid:s.sid||null,seen:s.seen||null,known:s.known||gsNoKnown(),dirty:!!s.dirty})}catch(e){}
+try{const s=hasConsent()?JSON.parse(store.get(GSK)||"null"):null;if(s&&s.email)Object.assign(GS,{dev:s.dev||null,devName:s.devName||null,email:s.email,sid:s.sid||null,seen:s.seen||null,known:s.known||gsNoKnown(),dirty:!!s.dirty})}catch(e){}
 try{const t=JSON.parse(sessionStorage.getItem(GSTK)||"null");if(t&&GS.email&&t.exp>Date.now())Object.assign(GS,{token:t.t,exp:t.exp})}catch(e){}
-function gsSave(){if(!GS.email){store.del(GSK);return}if(hasConsent())store.set(GSK,JSON.stringify({email:GS.email,sid:GS.sid,seen:GS.seen,known:GS.known,dirty:GS.dirty}))}
+function gsSave(){if(!GS.email){store.del(GSK);return}if(hasConsent())store.set(GSK,JSON.stringify({dev:GS.dev,devName:GS.devName,email:GS.email,sid:GS.sid,seen:GS.seen,known:GS.known,dirty:GS.dirty}))}
 function gsTok(){return GS.token&&Date.now()<GS.exp-60000?GS.token:null}
 function gsCan(){return !!GS.email&&hasConsent()&&(!lockOn()||!!ckey)}
 function gsDirty(){if(!GS||!GS.email||GS.applying)return;GS.ver++;GS.dirty=true;gsSave();clearTimeout(GS.timer);GS.timer=setTimeout(gsSync,2500);gsUI()}
@@ -2567,6 +2584,7 @@ async function gsSync(){
   const v0=GS.ver;let ok=false;
   try{
     await gsFile();
+    if(!(await gsDevices()))return;
     const rem=await gsRead();
     if(!rem)GS.seen=await gsWrite(await gsPayload(),0);
     else if(rem.meta.at===GS.seen){if(GS.dirty)GS.seen=await gsWrite(await gsPayload(),rem.n)}
@@ -2587,10 +2605,10 @@ async function gsSync(){
 }
 function gsOff(){
   if(!GS)return;clearTimeout(GS.timer);
-  Object.assign(GS,{email:null,sid:null,seen:null,known:gsNoKnown(),dirty:false,token:null,exp:0,err:"",carry:null,last:0});
+  Object.assign(GS,{dev:null,devName:null,devs:null,devAt:0,renaming:false,email:null,sid:null,seen:null,known:gsNoKnown(),dirty:false,token:null,exp:0,err:"",carry:null,last:0});
   try{sessionStorage.removeItem(GSTK)}catch(e){}store.del(GSK);gsUI();
 }
-const GS_ERR={popup_closed:"Прозорецът за вход беше затворен.",popup_failed_to_open:"Браузърът блокира прозореца за вход. Разрешете изскачащите прозорци за този сайт.",access_denied:"Не дадохте достъп.",scope:"Отбележете разрешението за Google Drive, за да работи синхронизацията.",lib:"Услугата на Google не може да се зареди. Проверете връзката.",net:"Няма връзка с Google. Ще опитаме отново.","403":"Google отказа достъп (403). В Google Cloud проекта трябва да са включени Google Sheets API и Google Drive API.",auth:"Сесията с Google е изтекла. Натиснете „Синхронизирай“."};
+const GS_ERR={out:"Излязохте от Google на това устройство по искане от друго ваше устройство. Данните са изтрити от този браузър и остават в Google таблицата.",popup_closed:"Прозорецът за вход беше затворен.",popup_failed_to_open:"Браузърът блокира прозореца за вход. Разрешете изскачащите прозорци за този сайт.",access_denied:"Не дадохте достъп.",scope:"Отбележете разрешението за Google Drive, за да работи синхронизацията.",lib:"Услугата на Google не може да се зареди. Проверете връзката.",net:"Няма връзка с Google. Ще опитаме отново.","403":"Google отказа достъп (403). В Google Cloud проекта трябва да са включени Google Sheets API и Google Drive API.",auth:"Сесията с Google е изтекла. Натиснете „Синхронизирай“."};
 function gsUI(){
   if(!GS||!$("gs-box"))return;
   const on=!!GS.email,tok=!!gsTok(),locked=lockOn()&&!ckey;
@@ -2604,7 +2622,99 @@ function gsUI(){
   const pill=$("gs-pill");pill.hidden=!on;
   $("gs-pill-t").textContent="Google: "+(GS.busy?"синхронизиране…":locked?"заключено":GS.err==="net"||GS.err==="403"?"грешка":!tok?"синхронизирай":GS.dirty?"предстои":"синхронизирано");
   pill.classList.toggle("warn",on&&!GS.busy&&(!tok||!!GS.err));
+  gsDevUI(on);
 }
+/* ---------- устройства с вход (скрит лист _devices: A – id на устройството, B – JSON) ---------- */
+const GS_DEV="_devices";
+const gsNewId=()=>"d"+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function gsDevName(){
+  const u=navigator.userAgent;
+  const b=/Edg\//.test(u)?"Edge":/OPR\//.test(u)?"Opera":/SamsungBrowser/.test(u)?"Samsung Internet":/Firefox\/|FxiOS/.test(u)?"Firefox":/Chrome\/|CriOS/.test(u)?"Chrome":/Safari\//.test(u)?"Safari":"Браузър";
+  const o=/iPhone/.test(u)?"iPhone":/iPad/.test(u)||(/Macintosh/.test(u)&&navigator.maxTouchPoints>1)?"iPad":/Android/.test(u)?"Android":/Windows/.test(u)?"Windows":/Macintosh|Mac OS X/.test(u)?"Mac":/CrOS/.test(u)?"ChromeOS":/Linux/.test(u)?"Linux":"";
+  return b+(o?" · "+o:"");
+}
+async function gsDevRead(){
+  let r;
+  try{r=await gsApi(GS_SH+"/"+GS.sid+"/values/"+encodeURIComponent(gsQ(GS_DEV)+"!A1:B200"))}
+  catch(e){if(e.status!==400)throw e;await gsApi(GS_SH+"/"+GS.sid+":batchUpdate",{method:"POST",body:JSON.stringify({requests:[{addSheet:{properties:{title:GS_DEV,hidden:true}}}]})});r={}}
+  const rows=r.values||[],list=[];
+  rows.forEach((x,i)=>{if(!x[0])return;try{list.push({...JSON.parse(x[1]||"{}"),id:x[0],row:i+1})}catch(e){}});
+  let free=rows.findIndex(x=>!x[0]);free=free<0?rows.length+1:free+1;
+  return{list,free};
+}
+const gsDevPut=(row,id,o)=>gsApi(GS_SH+"/"+GS.sid+"/values/"+encodeURIComponent(gsQ(GS_DEV)+"!A"+row+":B"+row)+"?valueInputOption=RAW",{method:"PUT",body:JSON.stringify({values:[[id||"",o?JSON.stringify(o):""]]})});
+/* записва това устройство; връща false, ако от друго устройство е поискан изход */
+async function gsDevices(){
+  if(!GS.dev){GS.dev=gsNewId();GS.devAt=0}
+  const {list,free}=await gsDevRead();
+  const me=list.find(d=>d.id===GS.dev);
+  if(me&&me.out){await gsDevPut(me.row,"",null).catch(()=>{});gsRemoteOut(me.out);return false}
+  const now=Date.now(),name=GS.devName||gsDevName();
+  if(!me||now-(GS.devAt||0)>300000||me.name!==name){
+    const o={name,first:me&&me.first||now,last:now},row=me?me.row:free;
+    await gsDevPut(row,GS.dev,o);GS.devAt=now;
+    if(me)Object.assign(me,o);else list.push({...o,id:GS.dev,row});
+  }
+  GS.devs=list;gsSave();return true;
+}
+function gsWipe(){
+  [VK,LK,AK,PDK,BK,GK,"zdoi4you-nerabotni"].forEach(k=>store.del(k));
+  ckey=null;apps=[];personal={};profile=null;bodies=[];gens=[];curGen=null;$("h-extra").value="";$("h-work").value="";
+  renderGens();renderBodies();deleteProfile();applyProfile(null);setEditing(true);fillPersonal();loadExtras();renderHolidays();renderApps();updateLockUI();setLocked(false);render();
+  if(currentView==="nachalo")renderHome();
+}
+function gsRemoteOut(o){gsOff();gsWipe();GS.err="out";GS.outBy=o&&o.by||"";gsUI()}
+async function gsLogout(){
+  const me=(GS.devs||[]).find(d=>d.id===GS.dev);
+  if(me&&GS.sid&&gsTok()){try{await gsDevPut(me.row,"",null)}catch(e){}}
+  gsOff();
+}
+async function gsDevAct(fn){
+  if(!gsTok()){gsClick();return}
+  try{await fn();GS.devs=(await gsDevRead()).list}catch(e){GS.err=e.message==="auth"?"auth":e.status===403?"403":"net"}
+  gsUI();
+}
+function gsDevOut(ids){
+  return gsDevAct(async()=>{
+    const {list}=await gsDevRead(),by=GS.devName||gsDevName();
+    for(const d of list)if(ids.includes(d.id)&&d.id!==GS.dev&&!d.out){const {id,row,...o}=d;o.out={at:Date.now(),by};await gsDevPut(row,id,o)}
+  });
+}
+const gsDt=t=>t?fmtInTZ(t,userTZ).slice(0,17):"—";
+const GS_ICO_PH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>';
+const GS_ICO_PC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>';
+function gsDevUI(on){
+  const box=$("gs-devs");
+  if(!on||!GS.devs){box.hidden=true;box.innerHTML="";box.dataset.h="";return}
+  const ds=GS.devs.slice().sort((a,b)=>(b.id===GS.dev)-(a.id===GS.dev)||(b.last||0)-(a.last||0));
+  const others=ds.filter(d=>d.id!==GS.dev&&!d.out);
+  const h=`<div class="devs-head"><div><b>Устройства с вход</b><span>Къде сте влезли с ${esc(GS.email)}. При изход отдалечено устройството излиза от Google и изтрива данните от браузъра си при следващото отваряне на приложението.</span></div>${others.length>1?'<button class="btn danger" type="button" data-dact="outall">Излез от всички други</button>':""}</div>`
+   +ds.map(d=>{
+    const me=d.id===GS.dev,ph=/iPhone|Android/.test(d.name||"");
+    const nm=me&&GS.renaming?`<span class="dev-ren"><input type="text" id="gs-ren" maxlength="60" value="${esc(GS.devName||gsDevName())}" aria-label="Име на устройството"><button class="btn primary" type="button" data-dact="rensave">Запази</button><button class="btn" type="button" data-dact="rencancel">Отказ</button></span>`:`<b>${esc(d.name||"Устройство")}</b>`;
+    const act=me?(GS.renaming?"":'<button class="btn" type="button" data-dact="ren">Преименувай</button><button class="btn" type="button" data-dact="me-out">Изход</button>')
+      :d.out?'<button class="btn" type="button" data-dact="del">Премахни от списъка</button>':'<button class="btn danger" type="button" data-dact="out">Излез</button>';
+    return `<div class="dev${me?" me":""}" data-id="${esc(d.id)}"><span class="dev-ico">${ph?GS_ICO_PH:GS_ICO_PC}</span><div class="dev-tx">${nm}<small>${me?'<span class="chip ok">Това устройство</span>':""}${d.out?'<span class="chip warn">Чака изход</span>':""}<span>Последно: ${gsDt(d.last)} · вход: ${gsDt(d.first)}</span></small></div><div class="dev-act">${act}</div></div>`;
+   }).join("");
+  box.hidden=false;
+  if(box.dataset.h!==h){box.innerHTML=h;box.dataset.h=h}
+}
+const gsDevArm={};
+$("gs-devs").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-dact]");if(!b)return;
+  const a=b.dataset.dact,row=b.closest(".dev"),id=row&&row.dataset.id;
+  const arm=(k,label,fn)=>{if(!gsDevArm[k]){b.textContent="Потвърди";gsDevArm[k]=setTimeout(()=>{delete gsDevArm[k];b.textContent=label},3500);return}clearTimeout(gsDevArm[k]);delete gsDevArm[k];b.disabled=true;fn()};
+  if(a==="out")arm(id,"Излез",()=>gsDevOut([id]));
+  else if(a==="outall")arm("all","Излез от всички други",()=>gsDevOut(GS.devs.filter(d=>d.id!==GS.dev).map(d=>d.id)));
+  else if(a==="del")gsDevAct(async()=>{const d=GS.devs.find(x=>x.id===id);if(d)await gsDevPut(d.row,"",null)});
+  else if(a==="me-out")arm("me","Изход",gsLogout);
+  else if(a==="ren"){GS.renaming=true;gsUI();const i=$("gs-ren");i.focus();i.select()}
+  else if(a==="rencancel"){GS.renaming=false;gsUI()}
+  else if(a==="rensave"){GS.devName=$("gs-ren").value.trim().slice(0,60)||null;GS.renaming=false;GS.devAt=0;gsSave();gsUI();gsSync()}
+});
+$("gs-devs").addEventListener("keydown",e=>{if(e.target.id!=="gs-ren")return;if(e.key==="Enter"){e.preventDefault();$("gs-devs").querySelector('[data-dact="rensave"]').click()}else if(e.key==="Escape"){GS.renaming=false;gsUI()}});
+$("gs-devs").addEventListener("input",e=>e.stopPropagation());
+$("gs-devs").addEventListener("change",e=>e.stopPropagation());
 function gsClick(){
   if(!hasConsent())return;
   if(gsTok()){gsSync();return}
@@ -2617,12 +2727,12 @@ $("gs-in").addEventListener("click",()=>{
     const u=await gsApi("https://www.googleapis.com/oauth2/v3/userinfo");
     if(!u||!u.email)throw new Error("scope");
     if(u.email!==GS.email)Object.assign(GS,{sid:null,seen:null,known:gsNoKnown()});
-    GS.email=u.email;GS.dirty=false;gsSave();await gsSync();
+    GS.email=u.email;GS.dirty=false;GS.dev=gsNewId();GS.devAt=0;GS.devs=null;gsSave();await gsSync();
   }).catch(e=>{GS.err=e.message;gsUI()});
 });
 $("gs-now").addEventListener("click",gsClick);
 $("gs-pill").addEventListener("click",gsClick);
-$("gs-out").addEventListener("click",gsOff);
+$("gs-out").addEventListener("click",gsLogout);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&GS.email)gsSync()});
 window.addEventListener("online",()=>{if(GS.email)gsSync()});
 setInterval(()=>{if(!document.hidden&&GS.email&&!GS.busy)gsSync()},90000);
