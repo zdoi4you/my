@@ -70,7 +70,7 @@ header.band::after{content:"";position:absolute;left:0;right:0;bottom:-1px;heigh
 .theme-sw button:hover svg{transform:rotate(-12deg) scale(1.1)}
 .theme-sw svg{transition:transform .25s ease}
 .sw-light{background:#fff}.sw-dark{background:#101C2E}.sw-pride{background:conic-gradient(#E40303,#FF8C00,#FFED00,#008026,#004DFF,#750787,#E40303)}.sw-auto{background:linear-gradient(90deg,#fff 50%,#101C2E 50%)}
-header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:14px}
+header .wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px 24px;padding-block:14px}
 .logo-plate{background:#FFFFFF;border-radius:12px;padding:6px 10px;display:inline-flex;line-height:0}
 .logo-plate img{height:56px;width:auto}
 .hdr-title{display:flex;flex-direction:column;gap:2px;min-width:0}
@@ -269,7 +269,7 @@ input[type=date],select,textarea{font-size:16px;min-height:44px}
   .results{scroll-margin-top:12px}
 }
 @media (max-width:640px){
-  header .wrap{flex-direction:column;align-items:flex-start;gap:10px;padding-block:12px}
+  header .wrap{grid-template-columns:minmax(0,1fr);gap:10px;padding-block:12px}
   .hdr-side{order:-1;flex-direction:row;align-items:center;justify-content:space-between;width:100%;flex-wrap:wrap}
   .logo-plate{padding:4px 8px}
   .theme-sw{max-width:100%;overflow-x:auto;scrollbar-width:none}
@@ -346,7 +346,11 @@ input[type=password],input[type=email],input[type=tel]{font:inherit;font-size:16
 .settings-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
 @media (max-width:860px){.settings-grid{grid-template-columns:minmax(0,1fr)}}
 .lockstate{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.hdr-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hdr-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-height:32px;margin-top:6px}
+.hdr-title #hello,.hdr-title h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prof-pill{max-width:min(260px,100%);color:var(--blue)}
+.prof-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prof-pill.empty{border-style:dashed}
 .lock-now{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:12.5px;font-weight:600;border-radius:999px;padding:6px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;min-height:32px}
 .lock-now svg{width:14px;height:14px}
 .lock-now.warn{color:var(--warn);background:var(--warn-bg);border-color:var(--warn)}
@@ -525,6 +529,10 @@ footer{background:var(--surface)}
 .foot-link:hover{text-decoration:underline;text-underline-offset:3px}
 .foot-link.danger-link{color:var(--bad)}
 .foot-note{font-size:12.5px;color:var(--muted)}
+.social{display:flex;gap:8px;flex-wrap:wrap}
+.social a{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);background:var(--surface);color:var(--navy);transition:background-color .2s ease,color .2s ease,transform .15s ease}
+.social a:hover,.social a:focus-visible{background:var(--navy);border-color:var(--navy);color:var(--surface);transform:translateY(-1px)}
+.social svg{width:20px;height:20px}
 .foot-mail{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:6px 6px 6px 10px;max-width:100%}
 .foot-mail code{font-family:var(--f-mono);font-size:13.5px;color:var(--ink);overflow-wrap:anywhere;user-select:all}
 .foot-mail .btn{min-height:32px;padding:5px 10px;font-size:12.5px}
@@ -560,7 +568,7 @@ footer{border-top
       <span class="eyebrow" id="hello">My ЗДОИ4You · приложение за заявители</span>
       <h1>Моите преписки по ЗДОИ</h1>
       <div class="hdr-actions">
-        <button class="prof-link" type="button" id="prof-jump"><span id="prof-jump-text">Профил: не е попълнен</span></button>
+        <button class="lock-now prof-pill empty" type="button" id="prof-jump"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span id="prof-jump-text">Попълнете профила</span></button>
         <button class="lock-now" type="button" id="lock-now" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Заключи</button>
         <button class="lock-now" type="button" id="gs-pill" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.2M3 12a9 9 0 0 1 15.5-6.2"/><path d="M21 4v5h-5M3 20v-5h5"/></svg><span id="gs-pill-t">Google</span></button>
       </div>
@@ -1111,7 +1119,7 @@ footer{border-top
     </div>
     <p class="lead" id="ck-state-text"></p>
     <div class="ck-cat"><div><b>Необходими</b><span>Съгласието, изборът ви за бисквитки и данните, които сами запишете. Винаги включени, докато ползвате приложението.</span></div><span class="chip ok">Винаги включени</span></div>
-    <label class="ck-cat tog"><div><b>Предпочитания</b><span>Тема, часова зона и настройки за достъпност. Ако ги изключите, записаните предпочитания се изтриват, а промените важат само до затваряне на страницата.</span></div><input type="checkbox" id="pv-prefs"></label>
+    <label class="ck-cat tog"><div><b>Предпочитания</b><span>Часова зона и настройки за достъпност. Ако ги изключите, записаните предпочитания се изтриват, а промените важат само до затваряне на страницата.</span></div><input type="checkbox" id="pv-prefs"></label>
     <div class="tablewrap"><table class="ck-table" data-cktable></table></div>
     <p class="hint">Бисквитката за съгласие се казва zdoi4you_consent и се пази 12 месеца. След това ще ви попитаме отново.</p>
   </section>
@@ -1122,7 +1130,7 @@ footer{border-top
       <li>Шрифтът е вграден в страницата и не се зарежда от Google Fonts или други външни сървъри.</li>
       <li>Вход с Google (по желание). Библиотеката за вход се зарежда от accounts.google.com, когато отворите „Моят профил“ или вече сте свързани. Ако влезете, данните се записват в Google таблица във вашия Google Drive чрез Google Sheets API и Google Drive API. Приложението има достъп само до таблицата, която само създава, и до имейла на акаунта. Ние не получаваме данните. За тях важат правилата на Google. Ако сте включили заключване с парола, в таблицата се пазят само шифровани данни.</li>
       <li>Библиотеката за създаване на PDF (jsPDF) се зарежда от cdnjs.cloudflare.com. При зареждането Cloudflare получава IP адреса ви, както при всяко посещение на сайт. Не се изпращат бисквитки и въведени данни.</li>
-      <li>Връзките към ССЕВ, платформата за достъп до обществена информация и сайтовете на органите се отварят в нов раздел и за тях важат техните правила.</li>
+      <li>Връзките към социалните мрежи на проекта, ССЕВ, платформата за достъп до обществена информация и сайтовете на органите се отварят в нов раздел и за тях важат техните правила.</li>
       <li>Хостинг доставчикът на сайта може да води технически записи за достъпа (например IP адрес и време на заявката) съгласно своите правила.</li>
     </ul>
   </section>
@@ -1148,6 +1156,7 @@ footer{border-top
       </div>
       <p>Проект на Сдружение „Просвета за демокрация“. Данните остават във вашия браузър и по ваш избор във вашия Google Drive – не ги получаваме и не водим логове.</p>
       <a class="foot-link" href="https://www.zdoi4you.eu" target="_blank" rel="noopener">www.zdoi4you.eu</a>
+      <div class="social" aria-label="Социални мрежи"><a href="https://www.facebook.com/zdoi4you" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H6.5v3.5H9V21h3.5v-7.5H15l.5-3.5h-3V7a1 1 0 0 1 1-1H15z"/></svg></a><a href="https://www.instagram.com/zdoi4you" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a><a href="https://www.threads.com/@zdoi4you" target="_blank" rel="noopener" aria-label="Threads" title="Threads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.9 7.9"/></svg></a><a href="https://www.youtube.com/@zdoi4you" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.6 7.6a2.6 2.6 0 0 0-1.8-1.8C18.2 5.4 12 5.4 12 5.4s-6.2 0-7.8.4a2.6 2.6 0 0 0-1.8 1.8A27 27 0 0 0 2 12a27 27 0 0 0 .4 4.4 2.6 2.6 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.4z"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg></a><a href="https://discord.gg/cPwT8UbEUq" target="_blank" rel="noopener" aria-label="Discord" title="Discord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 17.5 7.5 19c-2.2-.4-3.9-1.3-5-2.3 0-4.4 1.1-8.2 3.2-11 1.4-.7 2.9-1.1 4.3-1.4l.6 1.3a13 13 0 0 1 2.8 0l.6-1.3c1.4.3 2.9.7 4.3 1.4 2.1 2.8 3.2 6.6 3.2 11-1.1 1-2.8 1.9-5 2.3l-1-1.5"/><path d="M7.5 15.8c3 1.4 6 1.4 9 0"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/></svg></a></div>
     </div>
     <nav class="foot-col" aria-label="Правна информация">
       <span class="foot-h">Информация</span>
@@ -1216,7 +1225,7 @@ footer{border-top
       <h3>Бисквитки и хранилище на браузъра</h3>
       <p>Не използваме бисквитки за анализ, реклама или проследяване, нито бисквитки на трети страни. Можете да откажете незадължителните бисквитки – приложението ще работи по същия начин.</p>
       <div class="ck-cat"><div><b>Необходими</b><span>Запомнят приемането на условията и избора ви за бисквитки, както и данните, които сами запишете (профил, преписки, субекти, заявления). Без тях приложението не може да работи.</span></div><span class="chip ok">Винаги включени</span></div>
-      <label class="ck-cat tog"><div><b>Предпочитания</b><span>Запомнят избраната тема, часова зона и настройките за достъпност между посещенията.</span></div><input type="checkbox" id="ck-prefs"></label>
+      <label class="ck-cat tog"><div><b>Предпочитания</b><span>Запомнят часовата зона и настройките за достъпност между посещенията. Избраната тема се запомня винаги.</span></div><input type="checkbox" id="ck-prefs"></label>
       <details class="ck-more"><summary>Списък на бисквитките и записите</summary><div class="tablewrap"><table class="ck-table" data-cktable></table></div></details>
     </div>
     <p class="err" id="gate-err" hidden>Първо отбележете, че приемате условията за ползване.</p>
@@ -1528,7 +1537,9 @@ function setEditing(on){
 }
 function updateProfJump(){
   const p=profile&&profile.e?placeBy(profile.e):null;
-  $("prof-jump-text").textContent=profile?("Профил: "+(personal.name?personal.name+", ":"")+(profile.t==="ul"?"ЮЛ":"ФЛ")+(p?", "+placeLabel(p):"")+" · "+(courtName()||"")).replace(/ · $/,""):"Профил: не е попълнен";
+  const full=profile?((personal.name?personal.name+", ":"")+(profile.t==="ul"?"юридическо лице":"физическо лице")+(p?", "+placeLabel(p):"")+(courtName()?" · "+courtName():"")):"Профилът не е попълнен";
+  $("prof-jump-text").textContent=profile?((personal.name||"").trim()||"Моят профил"):"Попълнете профила";
+  $("prof-jump").title=full;$("prof-jump").setAttribute("aria-label","Моят профил: "+full);$("prof-jump").classList.toggle("empty",!profile);
 }
 let suggIdx=-1,suggList=[];
 const norm=s=>s.toLowerCase().replace(/ё/g,"е").replace(/^\s*(гр\.?|град|с\.?|село)\s+/,"").replace(/\s+/g," ").trim();
@@ -1595,7 +1606,7 @@ function consentVal(){let v=null;try{const c=document.cookie.split(/;\s*/).find(
 function hasConsent(){return /^v2:[01]$/.test(consentVal()||"")}
 function prefsOk(){return consentVal()==="v2:1"}
 function giveConsent(prefs){const v="v2:"+(prefs?1:0);try{document.cookie=CK+"="+v+"; max-age=31536000; path=/; SameSite=Lax; Secure"}catch(e){}store.set(CK,v);try{store.set("zdoi4you_consent_at",new Date().toISOString())}catch(e){}}
-function dropPrefs(){["zdoi4you_theme","zdoi4you_tz"].forEach(k=>{try{document.cookie=k+"=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del(k)});store.del("zdoi4you_a11y")}
+function dropPrefs(){["zdoi4you_tz"].forEach(k=>{try{document.cookie=k+"=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del(k)});store.del("zdoi4you_a11y")}
 function withdrawConsent(){try{document.cookie=CK+"=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del(CK);store.del("zdoi4you_consent_at");store.del("zdoi4you-nerabotni");store.del("zdoi4you-srokove");deleteProfile();try{document.cookie="zdoi4you_tz=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del("zdoi4you_tz");try{document.cookie="zdoi4you_theme=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del("zdoi4you_theme");store.del("zdoi4you_apps");["zdoi4you_vault","zdoi4you_lock","zdoi4you_personal","zdoi4you_autolock","zdoi4you_a11y","zdoi4you_bodies","zdoi4you_gens"].forEach(k=>store.del(k))}
 const FIELDS=["h-extra","h-work"];
 function save(){if(!hasConsent())return;const o={};FIELDS.forEach(id=>o[id]=$(id).value);const s=JSON.stringify(o);if(s!==store.get("zdoi4you-nerabotni")){store.set("zdoi4you-nerabotni",s);gsDirty()}}
@@ -1689,6 +1700,7 @@ tick();setInterval(tick,1000);
 
 /* ---------- тема ---------- */
 const THK="zdoi4you_theme";
+function writeTheme(v){if(!hasConsent())return;try{document.cookie=THK+"="+encodeURIComponent(v)+"; max-age=31536000; path=/; SameSite=Lax; Secure"}catch(e){}store.set(THK,v)}
 function readCk(k){try{const c=document.cookie.split(/;\s*/).find(x=>x.startsWith(k+"="));if(c)return decodeURIComponent(c.slice(k.length+1))}catch(e){}return store.get(k)}
 function writeCk(k,v){if(!prefsOk())return;try{document.cookie=k+"="+encodeURIComponent(v)+"; max-age=31536000; path=/; SameSite=Lax; Secure"}catch(e){}store.set(k,v)}
 function delCk(k){try{document.cookie=k+"=; max-age=0; path=/; SameSite=Lax; Secure"}catch(e){}store.del(k)}
@@ -1697,8 +1709,8 @@ function applyTheme(v){
   if(v==="light"||v==="dark"||v==="pride"||v==="contrast")r.setAttribute("data-theme",v);else r.removeAttribute("data-theme");
   document.querySelectorAll("[data-theme-set]").forEach(b=>b.setAttribute("aria-checked",String(b.dataset.themeSet===(v||"auto"))));
 }
-document.querySelectorAll("[data-theme-set]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.themeSet;applyTheme(v);if(v==="auto")delCk(THK);else writeCk(THK,v)}));
-{const th=prefsOk()?readCk(THK):null;if(th)applyTheme(th);}
+document.querySelectorAll("[data-theme-set]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.themeSet;applyTheme(v);if(v==="auto")delCk(THK);else writeTheme(v)}));
+{const th=hasConsent()?readCk(THK):null;if(th)applyTheme(th);}
 
 /* ---------- моите заявления (хранилище на браузъра) ---------- */
 const AK="zdoi4you_apps";
@@ -1973,7 +1985,7 @@ function applyA11y(){
 $("fs-up").addEventListener("click",()=>{const i=SIZES.indexOf(a11y.size);a11y.size=SIZES[Math.min(SIZES.length-1,(i<0?1:i)+1)];applyA11y()});
 $("fs-down").addEventListener("click",()=>{const i=SIZES.indexOf(a11y.size);a11y.size=SIZES[Math.max(0,(i<0?1:i)-1)];applyA11y()});
 [["a-spacing","spacing"],["a-links","links"],["a-cursor","cursor"],["a-motion","motion"]].forEach(([id,k])=>$(id).addEventListener("change",e=>{a11y[k]=e.target.checked;applyA11y()}));
-$("a-contrast").addEventListener("change",e=>{const v=e.target.checked?"contrast":"auto";applyTheme(v);if(v==="auto")delCk(THK);else writeCk(THK,v)});
+$("a-contrast").addEventListener("change",e=>{const v=e.target.checked?"contrast":"auto";applyTheme(v);if(v==="auto")delCk(THK);else writeTheme(v)});
 $("a-reset").addEventListener("click",()=>{a11y={size:100,spacing:false,links:false,cursor:false,motion:false};if(document.documentElement.getAttribute("data-theme")==="contrast"){applyTheme("auto");delCk(THK)}applyA11y()});
 function a11yOpen(on){$("a11y-pop").hidden=!on;$("a11y-fab").setAttribute("aria-expanded",String(on));if(on)$("fs-up").focus()}
 $("a11y-fab").addEventListener("click",()=>a11yOpen($("a11y-pop").hidden));
@@ -2353,7 +2365,7 @@ const CK_LIST=[
  ["zdoi4you-nerabotni","Хранилище","Добавените от вас неработни дни","До изтриване","Необходима"],
  ["zdoi4you_gsync","Хранилище","Връзка с Google: имейл на акаунта, идентификатор на таблицата и състояние на синхронизацията","До изход от Google","Необходима"],
  ["zdoi4you_gtoken","Хранилище за сесията","Временен ключ за достъп до Google Drive","До 1 час или затваряне на раздела","Необходима"],
- ["zdoi4you_theme","Бисквитка","Избраната тема","12 месеца","Предпочитания"],
+ ["zdoi4you_theme","Бисквитка","Избраната от вас тема","12 месеца","Необходима"],
  ["zdoi4you_tz","Бисквитка","Избраната часова зона","12 месеца","Предпочитания"],
  ["zdoi4you_a11y","Хранилище","Размер на текста и настройки за достъпност","До изтриване","Предпочитания"]
 ];
@@ -2375,7 +2387,7 @@ function applyChoice(prefs){
   const first=!hasConsent();
   giveConsent(prefs);
   if(!prefs)dropPrefs();
-  else{const th=document.documentElement.getAttribute("data-theme");if(th)writeCk(THK,th);writeTZ(userTZ);store.set(A11K,JSON.stringify(a11y))}
+  else{const th=document.documentElement.getAttribute("data-theme");if(th)writeTheme(th);writeTZ(userTZ);store.set(A11K,JSON.stringify(a11y))}
   if(first){
     if(!lockOn()){loadApps();loadBodies();loadGens();try{personal=JSON.parse(store.get(PDK)||"{}")||{}}catch(e){personal={}};profile=readProfile();applyProfile(profile);fillPersonal();setEditing(!profile);renderBodies();renderGens();renderApps()}
     try{const h=JSON.parse(store.get("zdoi4you-nerabotni")||"null");if(h){FIELDS.forEach(id=>{if(h[id])$(id).value=h[id]});loadExtras();renderHolidays()}}catch(e){}
@@ -2404,7 +2416,7 @@ function renderPrivacy(){
 $("pv-prefs").addEventListener("change",e=>{
   e.stopPropagation();if(!hasConsent())return;
   const on=e.target.checked;giveConsent(on);
-  if(!on)dropPrefs();else{const th=document.documentElement.getAttribute("data-theme");if(th)writeCk(THK,th);writeTZ(userTZ);store.set(A11K,JSON.stringify(a11y))}
+  if(!on)dropPrefs();else{const th=document.documentElement.getAttribute("data-theme");if(th)writeTheme(th);writeTZ(userTZ);store.set(A11K,JSON.stringify(a11y))}
   updateConsentUI();renderPrivacy();
 });
 $("sup-copy").addEventListener("click",()=>{const v="support@zdoi4you.eu";const b=$("sup-copy");const done=()=>{b.textContent="Копирано";setTimeout(()=>b.textContent="Копирай",1600)};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v).then(done).catch(()=>{const r=document.createRange();r.selectNodeContents($("sup-mail"));const s=getSelection();s.removeAllRanges();s.addRange(r)});else{const r=document.createRange();r.selectNodeContents($("sup-mail"));const s=getSelection();s.removeAllRanges();s.addRange(r)}});
