@@ -131,6 +131,8 @@ textarea{font-family:var(--f-mono);font-size:13px;min-height:84px;resize:vertica
 .choice b{font-weight:600;font-size:14px}
 .choice em{font-style:normal;font-size:12.5px;color:var(--muted)}
 .check{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}
+.reply .check{min-height:32px}
+#g-rsame{overflow-wrap:anywhere}
 .check input{margin-top:3px;accent-color:var(--blue)}
 
 /* Резултати */
@@ -902,6 +904,7 @@ footer{border-top
           <div class="field"><label for="g-email">Имейл</label><input type="email" id="g-email" maxlength="120"></div>
           <div class="field"><label for="g-phone">Телефон</label><input type="tel" id="g-phone" maxlength="40"></div>
         </div>
+        <div class="field reply" id="g-reply"><span class="legend">Имейл за отговора и информацията</span><label class="check"><input type="radio" name="g-rmode" value="same" checked><span id="g-rsame">Имейлът по-горе</span></label><label class="check"><input type="radio" name="g-rmode" value="other"><span>Друг имейл</span></label><input type="email" id="g-remail" maxlength="120" autocomplete="off" placeholder="напр. zdoi@example.bg" aria-label="Друг имейл за отговор" hidden><span class="hint">Посочва се в заявлението като адрес, на който да ви изпратят решението и информацията.</span></div>
         <label class="check"><input type="checkbox" id="g-ssev"><span>Съгласен/на съм кореспонденцията да се води чрез моя профил в ССЕВ (чл. 25, ал. 1, т. 4 ЗДОИ)</span></label>
       </fieldset>
       <fieldset class="fs2" id="g-clar-fs" hidden><legend>Уточнение на предмета (чл. 29 ЗДОИ)</legend>
@@ -2150,7 +2153,7 @@ function fillGenBodies(){
   if(bodies.some(b=>b.id===cur))$("g-body").value=cur;
 }
 function applyGenBody(id){const b=bodies.find(x=>x.id===id);if(!b)return;$("g-to").value=b.head||b.name;$("g-toaddr").value=b.addr||"";if(b.ssev&&!b.email)$("g-via").value="ssev";else if(b.email)$("g-via").value="email"}
-const GFIELDS=["g-body","g-to","g-toaddr","g-name","g-eik","g-seat","g-rep","g-outno","g-email","g-phone","g-desc","g-place","g-date","g-via","g-case","g-cno","g-cdate","g-cmode","g-nno","g-ndate","g-nrecv","g-ctext"];
+const GFIELDS=["g-body","g-to","g-toaddr","g-name","g-eik","g-seat","g-rep","g-outno","g-email","g-remail","g-phone","g-desc","g-place","g-date","g-via","g-case","g-cno","g-cdate","g-cmode","g-nno","g-ndate","g-nrecv","g-ctext"];
 let clarPick=null;
 function genKind(){return document.querySelector('input[name="g-kind"]:checked').value}
 function setGenKind(k){$("g-kind-"+(k==="clar"?"clar":"zay")).checked=true;updGenKind()}
@@ -2180,8 +2183,8 @@ function updGenKind(){
 function genType(){return document.querySelector('input[name="g-type"]:checked').value}
 function setGenType(v){$("g-type-"+(v==="ul"?"ul":"fl")).checked=true;updGenType()}
 function updGenType(){const ul=genType()==="ul";$("g-ul-box").hidden=!ul;$("g-name-label").textContent=ul?"Наименование":"Три имена"}
-function getGenForm(){const o={kind:genKind(),type:genType(),a:readAddr("g-a"),ssev:$("g-ssev").checked,nopub:$("g-nopub").checked,forms:[...$("g-forms").querySelectorAll("input:checked")].map(i=>i.value)};GFIELDS.forEach(id=>o[id]=$(id).value);return o}
-function setGenForm(o){fillGenCases();GFIELDS.forEach(id=>{if(id==="g-body"){fillGenBodies()}$(id).value=o&&o[id]!=null?o[id]:""});setGenType(o&&o.type);writeAddr("g-a",o&&o.a);$("g-ssev").checked=!!(o&&o.ssev);$("g-nopub").checked=!!(o&&o.nopub);$("g-forms").querySelectorAll("input").forEach(i=>i.checked=o?(o.forms||[]).includes(i.value):i.value==="email");if(!o||!o["g-via"])$("g-via").value="email";if(!o||!o["g-cmode"])$("g-cmode").value="resp";setGenKind(o&&o.kind)}
+function getGenForm(){const o={kind:genKind(),type:genType(),a:readAddr("g-a"),rmode:gReplyMode(),ssev:$("g-ssev").checked,nopub:$("g-nopub").checked,forms:[...$("g-forms").querySelectorAll("input:checked")].map(i=>i.value)};GFIELDS.forEach(id=>o[id]=$(id).value);return o}
+function setGenForm(o){fillGenCases();GFIELDS.forEach(id=>{if(id==="g-body"){fillGenBodies()}$(id).value=o&&o[id]!=null?o[id]:""});setGenType(o&&o.type);writeAddr("g-a",o&&o.a);$("g-ssev").checked=!!(o&&o.ssev);$("g-form").querySelector('[name="g-rmode"][value="'+(o&&o.rmode==="other"?"other":"same")+'"]').checked=true;updReply();$("g-nopub").checked=!!(o&&o.nopub);$("g-forms").querySelectorAll("input").forEach(i=>i.checked=o?(o.forms||[]).includes(i.value):i.value==="email");if(!o||!o["g-via"])$("g-via").value="email";if(!o||!o["g-cmode"])$("g-cmode").value="resp";setGenKind(o&&o.kind)}
 function prefillFromProfile(force){
   const set=(id,v)=>{if(v&&(force||!$(id).value))$(id).value=v};
   if(profile&&(force||!$("g-name").value))setGenType(profile.t);
@@ -2189,6 +2192,7 @@ function prefillFromProfile(force){
   const a=personal.a||(personal.addr?{street:personal.addr}:null);
   if(a&&(force||!AK2.some(k=>$("g-a-"+k).value))){if(a.same&&profile&&profile.e)a.ek=profile.e;writeAddr("g-a",a)}
   if(profile&&profile.e){const p=placeBy(profile.e);if(p){set("g-place",placeLabel(p));set("g-seat",placeLabel(p));if(!$("g-a-city").value){$("g-a-city").value=placeLabel(p);$("g-a-city").dataset.ek=p[3];$("g-a-loc").textContent=locText(p)}}}
+  updReply();
 }
 function genEnter(){
   fillGenBodies();fillGenCases();prefillFromProfile(false);updGenType();
@@ -2206,7 +2210,7 @@ function genModel(){
   const kind=genKind();
   const citems=$("g-ctext").value.trim().split(/\n+/).map(s=>s.replace(/^\s*(\d+[.)]|[-•*])\s*/,"").trim()).filter(Boolean);
   const df=id=>$(id).value?fmt(parseISO($(id).value)):"";
-  return {kind,citems,caseId:$("g-case").value,cno:$("g-cno").value.trim(),cdate:df("g-cdate"),cmode:$("g-cmode").value,nno:$("g-nno").value.trim(),ndate:df("g-ndate"),nrecv:df("g-nrecv"),type:genType(),bodyName:b?b.name:"",to:$("g-to").value.trim(),toaddr:$("g-toaddr").value.trim(),name:$("g-name").value.trim(),eik:ul?$("g-eik").value.trim():"",seat:ul?$("g-seat").value.trim():"",rep:ul?$("g-rep").value.trim():"",outno:ul?$("g-outno").value.trim():"",addr:addrStr(readAddr("g-a")),email:$("g-email").value.trim(),phone:$("g-phone").value.trim(),ssev:$("g-ssev").checked,nopub:$("g-nopub").checked,forms,items,place:$("g-place").value.trim(),date:d,via:$("g-via").value,body:b};
+  return {kind,citems,caseId:$("g-case").value,cno:$("g-cno").value.trim(),cdate:df("g-cdate"),cmode:$("g-cmode").value,nno:$("g-nno").value.trim(),ndate:df("g-ndate"),nrecv:df("g-nrecv"),type:genType(),bodyName:b?b.name:"",to:$("g-to").value.trim(),toaddr:$("g-toaddr").value.trim(),name:$("g-name").value.trim(),eik:ul?$("g-eik").value.trim():"",seat:ul?$("g-seat").value.trim():"",rep:ul?$("g-rep").value.trim():"",outno:ul?$("g-outno").value.trim():"",addr:addrStr(readAddr("g-a")),email:$("g-email").value.trim(),reply:gReply(),phone:$("g-phone").value.trim(),ssev:$("g-ssev").checked,nopub:$("g-nopub").checked,forms,items,place:$("g-place").value.trim(),date:d,via:$("g-via").value,body:b};
 }
 function genParas(m){
   const P=[];const ul=m.type==="ul";
@@ -2219,6 +2223,7 @@ function genParas(m){
   if(ul){if(m.eik)from.push("ЕИК / БУЛСТАТ: "+m.eik);if(m.seat)from.push("със седалище: "+m.seat);if(m.rep)from.push("представлявано от "+m.rep)}
   if(m.addr)from.push("адрес за кореспонденция: "+m.addr);
   const c=[m.phone?"тел.: "+m.phone:"",m.email?"имейл: "+m.email:""].filter(Boolean).join(", ");if(c)from.push(c);
+  if(m.reply&&m.reply!==m.email)from.push("имейл за отговор: "+m.reply);
   if(m.ssev)from.push("профил в системата за сигурно електронно връчване (ССЕВ)");
   P.push({k:"from",lines:from});
   P.push({k:"p",text:"Уважаеми господин/госпожо,"});
@@ -2238,11 +2243,12 @@ function genParas(m){
   if(m.items.length>1)P.push({k:"ol",items:m.items});else P.push({k:"p",text:m.items[0]||"[описание на исканата информация]",ph:!m.items.length});
   if(!clar&&m.forms.length){
     let s=(ul?"Предпочитаме":"Предпочитам")+" да получ"+(ul?"им":"а")+" достъп до информацията в следната форма (чл. 26, ал. 1 ЗДОИ): "+m.forms.map(f=>FORM_L[f]).join("; ")+".";
-    if(m.forms.includes("email")&&m.email)s+=" Моля, изпратете информацията на имейл "+m.email+".";
+    if(m.forms.includes("email")&&m.reply)s+=" Моля, изпратете информацията на имейл "+m.reply+".";
     P.push({k:"p",text:s});
   }
   if(m.ssev)P.push({k:"p",text:(ul?"Съгласни сме":"Съгласен/на съм")+" кореспонденцията по "+(clar?"уточнението и заявлението":"заявлението")+" да се води чрез "+(ul?"нашия":"моя")+" профил в ССЕВ съгласно чл. 25, ал. 1, т. 4 ЗДОИ."});
   }
+  if(m.reply&&m.reply!==m.email)P.push({k:"p",text:"Моля, "+(clar?"отговорът по уточнението и заявлението":"решението по заявлението")+" да бъде изпратен"+(clar?"":"о")+" на имейл "+m.reply+"."});
   if(!clar&&m.nopub)P.push({k:"p",text:(ul?"Не желаем":"Не желая")+" заявлението, решението и предоставената информация да бъдат публикувани на платформата за достъп до обществена информация (чл. 25, ал. 1, т. 5 ЗДОИ)."});
   P.push({k:"p",text:"С уважение,"});
   const signer=ul?(m.rep||m.name||""):(m.name||"");const el=["email","pitay","ssev"].includes(m.via);
@@ -2279,8 +2285,12 @@ function renderGen(){
   else s=`<span>Разпечатайте два екземпляра и ги подайте в деловодството. На вашия екземпляр поискайте входящ номер и дата.</span>`;
   $("g-send").innerHTML=s;
 }
-$("g-form").addEventListener("input",e=>{e.stopPropagation();if(e.target.id==="g-nrecv")updGenKind();renderGen()});
-$("g-form").addEventListener("change",e=>{e.stopPropagation();if(e.target.id==="g-body")applyGenBody(e.target.value);if(e.target.id==="g-case")applyGenCase(e.target.value);updGenKind();renderGen()});
+/* имейл за отговор: попълненият от профила или друг */
+function gReplyMode(){return($("g-form").querySelector('[name="g-rmode"]:checked')||{}).value==="other"?"other":"same"}
+function gReply(){return gReplyMode()==="other"&&$("g-remail").value.trim()||$("g-email").value.trim()}
+function updReply(){const e=$("g-email").value.trim(),o=gReplyMode()==="other";$("g-rsame").textContent="Имейлът по-горе"+(e?" – "+e:"");$("g-remail").hidden=!o}
+$("g-form").addEventListener("input",e=>{e.stopPropagation();if(e.target.id==="g-email")updReply();if(e.target.id==="g-nrecv")updGenKind();renderGen()});
+$("g-form").addEventListener("change",e=>{e.stopPropagation();if(e.target.name==="g-rmode"){updReply();if(gReplyMode()==="other")$("g-remail").focus()}if(e.target.id==="g-body")applyGenBody(e.target.value);if(e.target.id==="g-case")applyGenCase(e.target.value);updGenKind();renderGen()});
 $("g-form").addEventListener("submit",e=>e.preventDefault());
 $("g-send").addEventListener("click",e=>{const b=e.target.closest("[data-copy]");if(!b)return;const v=b.dataset.copy;const done=()=>{b.textContent="Копирано";setTimeout(()=>b.textContent="Копирай адреса",1500)};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v).then(done).catch(()=>fallback(v,done));else fallback(v,done)});
 function gMsg(m){$("g-msg").textContent=m;$("g-msg").hidden=false;setTimeout(()=>$("g-msg").hidden=true,4200)}
