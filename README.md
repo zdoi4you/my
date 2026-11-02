@@ -53,7 +53,14 @@
 ```
 index.html          приложението
 CNAME               собствен домейн за GitHub Pages
-assets/             оригинални лога (вградени в index.html)
+favicon.ico         иконка на сайта (16, 32, 48 px) – показва се и в резултатите на Google
+favicon-*.png, icon-192.png, icon-512.png, apple-touch-icon.png
+                    иконки за браузъри, Android и iOS
+site.webmanifest    име и иконки при „Добави към началния екран“
+og-image.png        картинка при споделяне (Facebook, Threads, Discord и др.)
+robots.txt, sitemap.xml
+                    за търсачките
+assets/             оригинални лога (вградени в index.html); logo-icon.png – изходник на иконките
 FONTS-LICENSE.md    лицензи на вградените шрифтове
 ```
 
