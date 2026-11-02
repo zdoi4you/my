@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Страницата не е намерена – My ЗДОИ4You</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0D3B78">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" href="/icons/favicon-96x96.png" sizes="96x96">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<script>
+/* разделите на приложението са с # – /profil → /#profil */
+(function(){
+  var v=location.pathname.replace(/^\/+|\/+$/g,"").toLowerCase();
+  if(/^(nachalo|srokove|prepiski|generator|subekti|taksi|profil|nastroyki|poveritelnost)$/.test(v))location.replace("/#"+v);
+  /* избраната в приложението тема */
+  var m=document.cookie.match(/(?:^|; )zdoi4you_theme=([^;]*)/),t=m&&decodeURIComponent(m[1]);
+  if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);
+})();
+</script>
+<style>
+:root{
+  --bg:#F2F6FB; --surface:#FFFFFF; --line:#D6E0EC; --ink:#0E1C33; --muted:#566782;
+  --navy:#0D3B78; --blue:#1A8FE3; --blue-soft:#E3F1FC; --r:10px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#09121F; --surface:#101C2E; --line:#22334C; --ink:#E5ECF6; --muted:#93A4BE;
+  --navy:#8EC5F7; --blue:#4AA8F0; --blue-soft:#12304F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#09121F; --surface:#101C2E; --line:#22334C; --ink:#E5ECF6; --muted:#93A4BE;
+  --navy:#8EC5F7; --blue:#4AA8F0; --blue-soft:#12304F; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{width:100%;max-width:560px;background:var(--surface);border:1px solid var(--line);border-radius:calc(var(--r)*2);padding:32px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.logo{width:112px;height:112px;border-radius:24px;background:#fff;border:1px solid var(--line)}
+.code{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue)}
+h1{margin:0;font-size:clamp(24px,5vw,30px);line-height:1.2;color:var(--navy)}
+p{margin:0;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:8px 18px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);color:var(--navy);font-weight:600;font-size:15px;text-decoration:none}
+.btn:hover,.btn:focus-visible{border-color:var(--blue);background:var(--blue-soft)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:var(--surface)}
+.btn.primary:hover,.btn.primary:focus-visible{background:var(--blue);border-color:var(--blue)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;font-size:14px;padding-top:14px;margin-top:6px;border-top:1px solid var(--line);width:100%}
+.links a{color:var(--blue)}
+.social{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.social a{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);color:var(--navy)}
+.social a:hover,.social a:focus-visible{background:var(--navy);border-color:var(--navy);color:var(--surface)}
+.social svg{width:20px;height:20px}
+@media (max-width:480px){main{padding:24px 18px}.actions .btn{flex:1 1 100%}}
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="/icons/icon-192.png" width="112" height="112" alt="My ЗДОИ4You">
+  <span class="code">Грешка 404</span>
+  <h1>Тази страница не съществува</h1>
+  <p>Адресът може да е сгрешен или страницата да е преместена. Вашите преписки и данни не са засегнати – те са в браузъра ви.</p>
+  <div class="actions">
+    <a class="btn primary" href="/">Към началото</a>
+    <a class="btn" href="/#prepiski">Моите преписки</a>
+    <a class="btn" href="/#srokove">Срокове</a>
+    <a class="btn" href="/#generator">Генератор на заявления</a>
+  </div>
+  <div class="links">
+    <a href="https://www.zdoi4you.eu" rel="noopener">www.zdoi4you.eu</a>
+    <a href="mailto:support@zdoi4you.eu">support@zdoi4you.eu</a>
+  </div>
+  <div class="social" aria-label="Социални мрежи">
+    <a href="https://www.facebook.com/zdoi4you" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H6.5v3.5H9V21h3.5v-7.5H15l.5-3.5h-3V7a1 1 0 0 1 1-1H15z"/></svg></a>
+    <a href="https://www.instagram.com/zdoi4you" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
+    <a href="https://www.threads.com/@zdoi4you" target="_blank" rel="noopener" aria-label="Threads" title="Threads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.9 7.9"/></svg></a>
+    <a href="https://www.youtube.com/@zdoi4you" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.6 7.6a2.6 2.6 0 0 0-1.8-1.8C18.2 5.4 12 5.4 12 5.4s-6.2 0-7.8.4a2.6 2.6 0 0 0-1.8 1.8A27 27 0 0 0 2 12a27 27 0 0 0 .4 4.4 2.6 2.6 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.4z"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg></a>
+    <a href="https://discord.gg/cPwT8UbEUq" target="_blank" rel="noopener" aria-label="Discord" title="Discord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 17.5 7.5 19c-2.2-.4-3.9-1.3-5-2.3 0-4.4 1.1-8.2 3.2-11 1.4-.7 2.9-1.1 4.3-1.4l.6 1.3a13 13 0 0 1 2.8 0l.6-1.3c1.4.3 2.9.7 4.3 1.4 2.1 2.8 3.2 6.6 3.2 11-1.1 1-2.8 1.9-5 2.3l-1-1.5"/><path d="M7.5 15.8c3 1.4 6 1.4 9 0"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/></svg></a>
+  </div>
+</main>
+</body>
+</html>

@@ -52,6 +52,7 @@
 
 ```
 index.html          приложението
+404.html            страница „Не е намерена“ (GitHub Pages я показва автоматично)
 CNAME               собствен домейн за GitHub Pages
 favicon.ico         иконка на сайта (16, 32, 48 px) – показва се и в резултатите на Google
 icons/              иконки за браузъри, Android и iOS (favicon-*.png, icon-192/512.png,
