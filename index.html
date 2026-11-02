@@ -184,6 +184,18 @@ details.box .inner{padding:0 18px 18px;display:flex;flex-direction:column;gap:14
 .login-text b{color:var(--navy);font-size:14.5px}
 .login-text span{color:var(--muted)}
 .devs{display:flex;flex-direction:column;gap:8px}
+.gs-why{display:flex;flex-direction:column;gap:8px}
+.gs-why[hidden],.gs-promo[hidden]{display:none}
+.gs-why ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.gs-why li{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--r);padding:12px;background:var(--surface)}
+.gs-why li div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.gs-why li b{color:var(--navy);font-size:14px}
+.gs-why li span:not(.dev-ico){color:var(--muted);font-size:13px}
+.gs-promo{display:flex;align-items:center;gap:12px 16px;flex-wrap:wrap;border:1px dashed var(--blue);background:var(--blue-soft);border-radius:var(--r);padding:14px 16px;color:var(--ink);text-decoration:none}
+.gs-promo .dev-ico{background:var(--surface)}
+.gs-promo-tx{display:flex;flex-direction:column;gap:2px;flex:1 1 300px;min-width:0}
+.gs-promo-tx b{color:var(--navy);font-size:15px}
+.gs-promo-tx span{color:var(--muted);font-size:13.5px}
 .devs[hidden]{display:none}
 .devs-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px 16px;flex-wrap:wrap}
 .devs-head div{display:flex;flex-direction:column;gap:2px;flex:1 1 280px;min-width:0}
@@ -626,6 +638,7 @@ footer{border-top
     <div class="hero-stats" id="home-stats"></div>
   </div>
   <div class="home-next" id="home-next"></div>
+  <a class="gs-promo" id="gs-promo" href="#profil" hidden><span class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="13" height="10" rx="2"/><path d="M5 19h7"/><rect x="17" y="8" width="5" height="11" rx="1"/></svg></span><span class="gs-promo-tx"><b>Вашите преписки на всяко устройство</b><span>Свържете приложението с Google: резервно копие в собствения ви Google Drive, достъп от телефона и компютъра и контрол на устройствата.</span></span><span class="btn primary">Свържете с Google</span></a>
   <div class="home-grid">
     <a class="home-card" href="#generator"><span class="hc-ico" data-ico="doc"></span><b>Заявление или уточнение</b><span>Генерирайте заявление по ЗДОИ или уточнение по чл. 29 с вашите данни и логото на проекта.</span></a>
     <a class="home-card" href="#prepiski"><span class="hc-ico" data-ico="folder"></span><b>Моите преписки</b><span>Вх. №, отговори, жалби, дела и статуси.</span></a>
@@ -1005,6 +1018,7 @@ footer{border-top
       <div class="login-text" aria-live="polite"><b id="gs-title">Вход и синхронизация с Google</b><span id="gs-text">Влезте с Google акаунт и профилът, преписките, субектите и генерираните заявления ще се пазят в Google таблица във вашия собствен Google Drive, достъпна от всяко устройство.</span></div>
       <div class="actions"><button class="btn primary" type="button" id="gs-in">Вход с Google</button><button class="btn primary" type="button" id="gs-now" hidden>Синхронизирай</button><a class="btn" id="gs-open" href="#" target="_blank" rel="noopener" hidden>Отвори таблицата</a><button class="btn" type="button" id="gs-out" hidden>Изход</button></div>
     </div>
+    <div class="gs-why" id="gs-why"><span class="eyebrow">Защо да свържете с Google</span><ul><li><span class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="13" height="10" rx="2"/><path d="M5 19h7"/><rect x="17" y="8" width="5" height="11" rx="1"/></svg></span><div><b>Достъп от всяко устройство</b><span>Телефон, компютър или таблет – влизате със същия Google акаунт и виждате едни и същи преписки, срокове и заявления.</span></div></li><li><span class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a5 5 0 0 1-.6-10A6 6 0 0 1 18 8.5a4.5 4.5 0 0 1-.5 9.5z"/><path d="M12 11v6M9.5 13.5 12 11l2.5 2.5"/></svg></span><div><b>Резервно копие</b><span>Данните не се губят, ако изчистите браузъра, смените телефона или загубите устройството.</span></div></li><li><span class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></svg></span><div><b>Таблица във вашия Google Drive</b><span>Таблицата е ваша: отваряте я, печатате я, споделяте я с адвокат или я изтривате. Ние нямаме достъп до нея.</span></div></li><li><span class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="m9.5 10 2 2 3.5-3.5"/></svg></span><div><b>Контрол на устройствата</b><span>Виждате къде сте влезли и излизате отдалечено. Изведеното устройство изтрива данните от браузъра си.</span></div></li><li><span class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div><b>Шифроване по желание</b><span>Ако включите заключване с парола, в Google се пазят само шифровани данни.</span></div></li><li><span class="dev-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><div><b>Без нова регистрация</b><span>Използвате съществуващия си Google акаунт. Безплатно е и можете да излезете по всяко време.</span></div></li></ul></div>
     <div class="devs" id="gs-devs" aria-live="polite" hidden></div>
     <div class="court-grid">
       <div class="court-form">
@@ -2623,6 +2637,7 @@ function gsUI(){
   $("gs-pill-t").textContent="Google: "+(GS.busy?"синхронизиране…":locked?"заключено":GS.err==="net"||GS.err==="403"?"грешка":!tok?"синхронизирай":GS.dirty?"предстои":"синхронизирано");
   pill.classList.toggle("warn",on&&!GS.busy&&(!tok||!!GS.err));
   gsDevUI(on);
+  $("gs-why").hidden=on;$("gs-promo").hidden=on||!hasConsent();
 }
 /* ---------- устройства с вход (скрит лист _devices: A – id на устройството, B – JSON) ---------- */
 const GS_DEV="_devices";
