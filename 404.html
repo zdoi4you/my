@@ -13,7 +13,7 @@
 /* разделите на приложението са с # – /profil → /#profil */
 (function(){
   var v=location.pathname.replace(/^\/+|\/+$/g,"").toLowerCase();
-  if(/^(nachalo|srokove|prepiski|generator|subekti|taksi|profil|nastroyki|poveritelnost)$/.test(v))location.replace("/#"+v);
+  if(/^(nachalo|srokove|prepiski|generator|subekti|taksi|sadeystvie|profil|nastroyki|poveritelnost)$/.test(v))location.replace("/#"+v);
   /* избраната в приложението тема */
   var m=document.cookie.match(/(?:^|; )zdoi4you_theme=([^;]*)/),t=m&&decodeURIComponent(m[1]);
   if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);

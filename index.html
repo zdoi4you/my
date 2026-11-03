@@ -29,7 +29,7 @@
 <meta name="twitter:title" content="My ЗДОИ4You – срокове, преписки и заявления по ЗДОИ">
 <meta name="twitter:description" content="Безплатно приложение за заявители по ЗДОИ: изчислява сроковете за отговор и обжалване, води преписките, генерира заявления и посочва компетентния съд.">
 <meta name="twitter:image" content="https://my.zdoi4you.eu/icons/og-image.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://my.zdoi4you.eu/#website","name":"My ЗДОИ4You","alternateName":["ЗДОИ4You","My ZDOI4You"],"url":"https://my.zdoi4you.eu/","inLanguage":"bg","publisher":{"@id":"https://my.zdoi4you.eu/#org"}},{"@type":"WebApplication","@id":"https://my.zdoi4you.eu/#app","name":"My ЗДОИ4You","url":"https://my.zdoi4you.eu/","description":"Безплатно приложение за заявители по ЗДОИ: изчислява сроковете за отговор и обжалване, води преписките, генерира заявления и посочва компетентния съд.","applicationCategory":"UtilitiesApplication","operatingSystem":"Всички (уеб браузър)","inLanguage":"bg","isAccessibleForFree":true,"image":"https://my.zdoi4you.eu/icons/og-image.png","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"featureList":["Срок за отговор по чл. 28–32 ЗДОИ и мълчалив отказ","Срокове за обжалване пред административния съд","Регистър на преписките по ЗДОИ","Генератор на заявления и уточнения по ЗДОИ в PDF","Адресник на задължените субекти","Разходи за носители по Наредба № Н-1/2022","Компетентен административен съд по чл. 133 АПК","Синхронизация с Google таблица"],"publisher":{"@id":"https://my.zdoi4you.eu/#org"}},{"@type":"Organization","@id":"https://my.zdoi4you.eu/#org","name":"Сдружение „Просвета за демокрация“","brand":"ЗДОИ4You","url":"https://www.zdoi4you.eu/","email":"support@zdoi4you.eu","logo":{"@type":"ImageObject","url":"https://my.zdoi4you.eu/icons/icon-512.png","width":512,"height":512},"sameAs":["https://www.facebook.com/zdoi4you","https://www.instagram.com/zdoi4you","https://www.threads.com/@zdoi4you","https://www.youtube.com/@zdoi4you","https://discord.gg/cPwT8UbEUq"]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://my.zdoi4you.eu/#website","name":"My ЗДОИ4You","alternateName":["ЗДОИ4You","My ZDOI4You"],"url":"https://my.zdoi4you.eu/","inLanguage":"bg","publisher":{"@id":"https://my.zdoi4you.eu/#org"}},{"@type":"WebApplication","@id":"https://my.zdoi4you.eu/#app","name":"My ЗДОИ4You","url":"https://my.zdoi4you.eu/","description":"Безплатно приложение за заявители по ЗДОИ: изчислява сроковете за отговор и обжалване, води преписките, генерира заявления и посочва компетентния съд.","applicationCategory":"UtilitiesApplication","operatingSystem":"Всички (уеб браузър)","inLanguage":"bg","isAccessibleForFree":true,"image":"https://my.zdoi4you.eu/icons/og-image.png","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"featureList":["Срок за отговор по чл. 28–32 ЗДОИ и мълчалив отказ","Срокове за обжалване пред административния съд","Регистър на преписките по ЗДОИ","Генератор на заявления и уточнения по ЗДОИ в PDF","Адресник на задължените субекти","Разходи за носители по Наредба № Н-1/2022","Компетентен административен съд по чл. 133 АПК","Синхронизация с Google таблица","Заявка за безплатна правна помощ при отказ по ЗДОИ"],"publisher":{"@id":"https://my.zdoi4you.eu/#org"}},{"@type":"Organization","@id":"https://my.zdoi4you.eu/#org","name":"Сдружение „Просвета за демокрация“","brand":"ЗДОИ4You","url":"https://www.zdoi4you.eu/","email":"support@zdoi4you.eu","logo":{"@type":"ImageObject","url":"https://my.zdoi4you.eu/icons/icon-512.png","width":512,"height":512},"sameAs":["https://www.facebook.com/zdoi4you","https://www.instagram.com/zdoi4you","https://www.threads.com/@zdoi4you","https://www.youtube.com/@zdoi4you","https://discord.gg/cPwT8UbEUq"]}]}</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -205,6 +205,23 @@ details.box .inner{padding:0 18px 18px;display:flex;flex-direction:column;gap:14
 .addapp[open]>summary{margin-bottom:14px}
 .addapp form{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--sunk)}
 .apps-list{display:flex;flex-direction:column;gap:10px}
+.lg-steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:16px}
+.lg-steps>li>b{display:block;color:var(--navy);font-size:15.5px;margin-bottom:4px}
+.lg-steps>li>span{display:block;margin-bottom:4px}
+.lg-steps ul{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.lg-steps ul b{color:var(--navy)}
+.warn-note{border-left-color:var(--warn);background:var(--warn-bg)}
+.bad-note{border-left-color:var(--bad);background:var(--bad-bg)}
+.choices.lg-kind{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.lg-files{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.lg-file{display:flex;flex-direction:column;gap:4px;border:1px dashed var(--line);border-radius:var(--r);padding:12px;background:var(--surface);cursor:pointer;min-width:0}
+.lg-file b{font-size:14px;color:var(--navy)}
+.lg-file i{font-style:normal;font-weight:500;color:var(--warn);font-size:12px;margin-left:4px}
+.lg-file span{color:var(--muted);font-size:12.5px}
+.lg-file input{font-size:13px;max-width:100%;margin-top:4px}
+.lg-list{display:flex;flex-direction:column;gap:8px}
+.lg-note{font-size:13.5px;color:var(--ink);white-space:pre-line}
+.copied.bad{color:var(--bad)}
 .login-box{display:flex;justify-content:space-between;align-items:center;gap:12px 18px;flex-wrap:wrap;border:1px dashed var(--blue);background:var(--blue-soft);border-radius:var(--r);padding:12px 14px}
 .login-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 300px;font-size:13.5px}
 .login-text b{color:var(--navy);font-size:14.5px}
@@ -649,6 +666,7 @@ footer{border-top
     <a href="#srokove" data-nav="srokove"><span data-ico="clock"></span><b>Срокове</b></a>
     <a href="#subekti" data-nav="subekti"><span data-ico="building"></span><b>Субекти</b></a>
     <a href="#taksi" data-nav="taksi"><span data-ico="euro"></span><b>Разходи</b></a>
+    <a href="#sadeystvie" data-nav="sadeystvie"><span data-ico="scale"></span><b>Съдействие</b></a>
     <a href="#profil" data-nav="profil"><span data-ico="user"></span><b>Профил</b></a>
     <a href="#nastroyki" data-nav="nastroyki"><span data-ico="gear"></span><b>Настройки</b></a>
     <a href="#poveritelnost" data-nav="poveritelnost"><span data-ico="shield"></span><b>Поверителност</b></a>
@@ -673,6 +691,7 @@ footer{border-top
     <a class="home-card" href="#srokove"><span class="hc-ico" data-ico="clock"></span><b>Срокове</b><span>Срок за отговор, мълчалив отказ, обжалване.</span></a>
     <a class="home-card" href="#subekti"><span class="hc-ico" data-ico="building"></span><b>Задължени субекти</b><span>Запазете органите, на които пишете най-често.</span></a>
     <a class="home-card" href="#taksi"><span class="hc-ico" data-ico="euro"></span><b>Разходи за носители</b><span>Колко струват копията, дисковете и флашките в евро.</span></a>
+    <a class="home-card" href="#sadeystvie"><span class="hc-ico" data-ico="scale"></span><b>Заявка за съдействие</b><span>Безплатна правна помощ при отказ или мълчалив отказ.</span></a>
     <a class="home-card" href="#profil"><span class="hc-ico" data-ico="user"></span><b>Моят профил</b><span>Име, адрес, компетентен съд.</span></a>
     <a class="home-card" href="#poveritelnost"><span class="hc-ico" data-ico="shield"></span><b>Поверителност</b><span>Бисквитки, съгласие и изтриване на данните.</span></a>
   </div>
@@ -1063,6 +1082,105 @@ footer{border-top
   </section>
   </div>
 
+  <div class="view" data-view="sadeystvie" hidden>
+  <section class="panel lg-hero">
+    <div class="prof-head">
+      <div><span class="eyebrow">Безплатна правна помощ</span><h2>Заявка за съдействие</h2></div>
+      <span class="chip ok">Без такса за представителство</span>
+    </div>
+    <p class="lead">Платформата ЗДОИ4You, инициатива на Сдружение „Просвета за демокрация“, предлага правна подкрепа на граждани, чието право на достъп до обществена информация е нарушено: при изричен отказ, частичен достъп или мълчалив отказ.</p>
+    <p class="note warn-note"><b>Заявката не спира сроковете за обжалване.</b> Жалбата срещу изричен отказ се подава в 14-дневен срок от съобщаването му, а срещу мълчалив отказ – в 2-месечен срок. Подайте заявката възможно най-рано.</p>
+  </section>
+
+  <section class="panel">
+    <div><span class="eyebrow">Процедура</span><h2>Как работи</h2></div>
+    <ol class="lg-steps">
+      <li><b>Подайте заявка</b>
+        <span>Попълнете формата по-долу след вход с Google. Приложете:</span>
+        <ul>
+          <li>копие от първоначалното заявление за достъп;</li>
+          <li>доказателство за регистрация (входящ номер и дата), за да изчислим законовите срокове за произнасяне;</li>
+          <li>копие от полученото решение при изричен или частичен отказ – то съдържа фактическите и правните основания на администрацията.</li>
+        </ul></li>
+      <li><b>Преценка на заявката</b>
+        <span>Не всички заявки се одобряват за процесуално представителство. Екипът ни преценява внимателно правната основателност на случая и наличния капацитет.</span>
+        <span>Ако не поемем представителството, можем да ви изпратим препоръка и насоки как да действате самостоятелно, за да защитите правата си.</span></li>
+      <li><b>Стъпки при одобрена заявка</b>
+        <ul>
+          <li><b>Преглед на договора.</b> По имейл получавате проект на „Договор за безвъзмездна поръчка и правна помощ“, за да се запознаете с него и да го одобрите електронно.</li>
+          <li><b>Подписване.</b> След одобрението ви договорът се изпраща в два еднообразни екземпляра чрез куриер. Подписвате го при получаването пред куриера и го връщате веднага със същия куриер. Куриерските разходи са за сметка на доверителя (гражданина).</li>
+          <li><b>Нотариално пълномощно.</b> До 3 дни след подписването на договора изготвяте и изпращате нотариално заверено пълномощно за представителство пред съда. Ако във вашето населено място няма нотариус, подписът може да се завери от кмета или друго оправомощено длъжностно лице. Таксата за първи подпис е 2,56 €.</li>
+          <li><b>Оригинали.</b> Хартиеният оригинал на пълномощното се изпраща до адреса на Сдружението в гр. Долни Дъбник, за да бъде представен пред съда.</li>
+        </ul></li>
+      <li><b>Какво да очаквате от нас</b>
+        <ul>
+          <li><b>Представителство.</b> Случаят ви се поема от наш доброволец или партньор. Някои от представителите ни нямат юридическо образование, но имат богата съдебна практика по ЗДОИ, доказана в реални дела.</li>
+          <li><b>Безвъзмездна помощ.</b> Не събираме такси за представителство. Дължите само държавните такси към съда.</li>
+          <li><b>Възстановяване на разходите.</b> При спечелено дело представителят ни ще поиска от съда да ви бъдат възстановени направените разноски (държавни такси) от бюджета на органа.</li>
+          <li><b>Отговорност.</b> Сдружението не носи отговорност при загубено дело. При разваляне на договора след завеждане на делото съдът се уведомява незабавно и поемате защитата си лично или чрез друг упълномощен представител.</li>
+        </ul></li>
+    </ol>
+    <p class="hint">Личните ви данни се обработват в съответствие с Политиката за защита на личните данни на Сдружение „Просвета за демокрация“. Въпроси: <a href="mailto:legal.crisis@zdoi4you.eu">legal.crisis@zdoi4you.eu</a>.</p>
+  </section>
+
+  <section class="panel" id="lg">
+    <div class="prof-head">
+      <div><span class="eyebrow">Подаване</span><h2>Изпратете заявка</h2></div>
+      <span class="chip info" id="lg-who" hidden></span>
+    </div>
+    <div class="login-box" id="lg-login">
+      <span class="dev-ico" data-ico="user"></span>
+      <div class="login-text"><b>Нужен е вход с Google</b><span id="lg-login-t">Заявки се приемат само от потребители, влезли с Google акаунт. Така знаем кой е подал заявката и ви пишем на същия имейл.</span></div>
+      <button class="btn primary" type="button" id="lg-in">Вход с Google</button>
+    </div>
+    <form id="lg-form" class="court-form" novalidate hidden>
+      <div class="field"><label for="lg-case">Преписка</label><select id="lg-case"></select><span class="hint">Изберете преписката от „Моите преписки“ – данните се попълват автоматично. Или попълнете ръчно.</span></div>
+      <div class="field"><span class="legend">Вид на нарушението</span>
+        <div class="choices lg-kind">
+          <label class="choice"><input type="radio" name="lg-kind" value="explicit" checked><span><b>Изричен отказ</b><em>Получили сте решение за отказ</em></span></label>
+          <label class="choice"><input type="radio" name="lg-kind" value="partial"><span><b>Частичен отказ</b><em>Предоставена е само част от информацията</em></span></label>
+          <label class="choice"><input type="radio" name="lg-kind" value="silent"><span><b>Мълчалив отказ</b><em>Няма отговор в законовия срок</em></span></label>
+        </div></div>
+      <div class="row2">
+        <div class="field"><label for="lg-name">Три имена / наименование</label><input type="text" id="lg-name" maxlength="120" autocomplete="name" required></div>
+        <div class="field"><label for="lg-phone">Телефон за връзка</label><input type="tel" id="lg-phone" maxlength="40" autocomplete="tel"><span class="hint">За куриера, ако заявката бъде одобрена.</span></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label for="lg-body">Задължен субект</label><input type="text" id="lg-body" maxlength="200" list="bodies-dl" required></div>
+        <div class="field"><label for="lg-city">Вашето населено място</label><input type="text" id="lg-city" maxlength="120"><span class="hint">Определя компетентния съд.</span></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label for="lg-no">Вх. № на заявлението</label><input type="text" id="lg-no" maxlength="60"></div>
+        <div class="field"><label for="lg-reg">Дата на регистриране</label><input type="date" id="lg-reg" required></div>
+        <div class="field lg-dec"><label for="lg-dec">Дата на решението</label><input type="date" id="lg-dec"></div>
+      </div>
+      <div class="row2 lg-dec">
+        <div class="field"><label for="lg-recv">Решението е получено на</label><input type="date" id="lg-recv"><span class="hint">От тази дата тече срокът за обжалване.</span></div>
+      </div>
+      <p class="note" id="lg-term" hidden></p>
+      <div class="field"><label for="lg-desc">Кратко описание</label><textarea id="lg-desc" maxlength="4000" style="font-family:var(--f-ui);font-size:15px;min-height:120px" placeholder="Каква информация поискахте, какво отговори органът и защо смятате, че отказът е незаконосъобразен."></textarea></div>
+      <div class="field"><span class="legend">Документи</span><span class="hint" style="margin-top:0">PDF, JPG, PNG, DOC, DOCX или ODT, до 8 MB на файл и 20 MB общо.</span>
+        <div class="lg-files">
+          <label class="lg-file"><b>Заявление за достъп <i>задължително</i></b><input type="file" id="lg-f-app" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.odt"></label>
+          <label class="lg-file"><b>Доказателство за регистрация <i>задължително</i></b><span>Вх. № и дата: разписка, имейл, ССЕВ, снимка</span><input type="file" id="lg-f-reg" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.odt"></label>
+          <label class="lg-file lg-dec"><b>Решение на органа <i>задължително</i></b><input type="file" id="lg-f-dec" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.odt"></label>
+          <label class="lg-file"><b>Други документи</b><span>Уточнения, кореспонденция</span><input type="file" id="lg-f-other" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.odt" multiple></label>
+        </div></div>
+      <label class="check"><input type="checkbox" id="lg-ok1"><span>Запознах се с процедурата, включително че куриерските разходи и държавните такси са за моя сметка и че не всяка заявка се одобрява.</span></label>
+      <label class="check"><input type="checkbox" id="lg-ok2"><span>Съгласен/на съм Сдружение „Просвета за демокрация“ да обработва данните и документите ми, за да разгледа заявката.</span></label>
+      <div class="actions"><button class="btn primary" type="submit" id="lg-send">Изпрати заявката</button><span class="copied" id="lg-msg" role="status" hidden></span></div>
+    </form>
+  </section>
+
+  <section class="panel" id="lg-mine" hidden>
+    <div class="prof-head">
+      <div><span class="eyebrow">Проследяване</span><h2>Моите заявки за съдействие</h2></div>
+      <button class="btn" type="button" id="lg-refresh">Обнови</button>
+    </div>
+    <div class="lg-list" id="lg-list" aria-live="polite"></div>
+  </section>
+  </div>
+
   <div class="view" data-view="profil" hidden>
   <section class="panel courtpanel" id="court">
     <div class="login-box" id="gs-box">
@@ -1213,6 +1331,7 @@ footer{border-top
       <li>Вход с Google (по желание). Библиотеката за вход се зарежда от accounts.google.com, когато отворите „Моят профил“ или вече сте свързани. Ако влезете, данните се записват в Google таблица във вашия Google Drive чрез Google Sheets API и Google Drive API. Приложението има достъп само до таблицата, която само създава, и до имейла на акаунта. Ние не получаваме данните. За тях важат правилата на Google. Ако сте включили заключване с парола, в таблицата се пазят само шифровани данни.</li>
       <li>Библиотеката за създаване на PDF (jsPDF) се зарежда от cdnjs.cloudflare.com. При зареждането Cloudflare получава IP адреса ви, както при всяко посещение на сайт. Не се изпращат бисквитки и въведени данни.</li>
       <li>Връзките към социалните мрежи на проекта, ССЕВ, платформата за достъп до обществена информация и сайтовете на органите се отварят в нов раздел и за тях важат техните правила.</li>
+      <li>Заявка за съдействие (по желание). Ако подадете заявка, данните от формата, приложените документи и имейлът на Google акаунта ви се изпращат чрез script.google.com на Сдружение „Просвета за демокрация“ и се пазят в негова таблица и папка в Google Drive, за да бъде разгледана заявката. Това е единственият случай, в който получаваме ваши данни.</li>
       <li>Хостинг доставчикът на сайта може да води технически записи за достъпа (например IP адрес и време на заявката) съгласно своите правила.</li>
     </ul>
   </section>
@@ -1236,7 +1355,7 @@ footer{border-top
         <img src="data:image/webp;base64,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" alt="Емблема на Сдружение „Просвета за демокрация“" width="40" height="40">
         <div><b>My ЗДОИ4You</b><span>Твоят път към обществената информация</span></div>
       </div>
-      <p>Проект на Сдружение „Просвета за демокрация“. Данните остават във вашия браузър и по ваш избор във вашия Google Drive – не ги получаваме и не водим логове.</p>
+      <p>Проект на Сдружение „Просвета за демокрация“. Данните остават във вашия браузър и по ваш избор във вашия Google Drive. Не ги получаваме, освен ако не ни изпратите заявка за съдействие, и не водим логове.</p>
       <a class="foot-link" href="https://www.zdoi4you.eu" target="_blank" rel="noopener">www.zdoi4you.eu</a>
       <div class="social" aria-label="Социални мрежи"><a href="https://www.facebook.com/zdoi4you" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h-2.5A3.5 3.5 0 0 0 9 6.5V10H6.5v3.5H9V21h3.5v-7.5H15l.5-3.5h-3V7a1 1 0 0 1 1-1H15z"/></svg></a><a href="https://www.instagram.com/zdoi4you" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a><a href="https://www.threads.com/@zdoi4you" target="_blank" rel="noopener" aria-label="Threads" title="Threads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.9 7.9"/></svg></a><a href="https://www.youtube.com/@zdoi4you" target="_blank" rel="noopener" aria-label="YouTube" title="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.6 7.6a2.6 2.6 0 0 0-1.8-1.8C18.2 5.4 12 5.4 12 5.4s-6.2 0-7.8.4a2.6 2.6 0 0 0-1.8 1.8A27 27 0 0 0 2 12a27 27 0 0 0 .4 4.4 2.6 2.6 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.4z"/><path d="M10 9.2v5.6l4.8-2.8z" fill="currentColor"/></svg></a><a href="https://discord.gg/cPwT8UbEUq" target="_blank" rel="noopener" aria-label="Discord" title="Discord"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 17.5 7.5 19c-2.2-.4-3.9-1.3-5-2.3 0-4.4 1.1-8.2 3.2-11 1.4-.7 2.9-1.1 4.3-1.4l.6 1.3a13 13 0 0 1 2.8 0l.6-1.3c1.4.3 2.9.7 4.3 1.4 2.1 2.8 3.2 6.6 3.2 11-1.1 1-2.8 1.9-5 2.3l-1-1.5"/><path d="M7.5 15.8c3 1.4 6 1.4 9 0"/><circle cx="9" cy="12" r="1.2" fill="currentColor"/><circle cx="15" cy="12" r="1.2" fill="currentColor"/></svg></a></div>
     </div>
@@ -1300,7 +1419,7 @@ footer{border-top
     <div class="gate-text">
       <p>My ЗДОИ4You е безплатно информационно помощно средство на Сдружение „Просвета за демокрация“. Резултатите не са правна консултация и не обвързват административния орган или съда. Сроковете зависят и от датата на действителното връчване, от допълнително обявени почивни дни, от промени в законодателството и от съдебната практика.</p>
       <p>Сдружението не носи отговорност за пропуснати срокове, неточни резултати или вреди от използването на приложението. Проверявайте сроковете сами и при съмнение се консултирайте с юрист.</p>
-      <p>Данните, които въвеждате, остават само във вашия браузър. Не ги получаваме, не водим логове и не ги обработваме.</p>
+      <p>Данните, които въвеждате, остават само във вашия браузър. Не ги получаваме, не водим логове и не ги обработваме – освен ако сами не ни изпратите заявка за съдействие.</p>
     </div>
     <label class="check"><input type="checkbox" id="gate-ok"><span>Запознат/а съм с условията за ползване и с отказа от отговорност и ги приемам.</span></label>
     <div class="ck-box">
@@ -1873,7 +1992,7 @@ function renderApps(){
       <div class="app-steps">${steps.map(s=>`<div class="step${next===s?" next":""}${(!s.info&&s.end<TODAY)||s.done?" past":""}"><small>${esc(s.k)}${s.done?" – подадена":""}</small><b>${fmt(s.end)}</b><small>${wd(s.end)}</small></div>`).join("")}</div>
       ${note?`<div class="app-note">${esc(note)}</div>`:""}
       ${court&&steps.some(s=>s.appeal)&&cs.k!=="closed"?`<div class="app-body">Подсъдност: ${esc(court)}</div>`:""}
-      <div class="app-actions"><button class="btn" type="button" data-act="open">Покажи изчислението</button><button class="btn" type="button" data-act="edit">Редактирай</button>${cs.k!=="closed"&&a.reg&&!a.dec?'<button class="btn" type="button" data-act="clar">Уточнение</button>':""}${cs.k!=="closed"?'<button class="btn" type="button" data-act="close">Отбележи като приключена</button>':'<button class="btn" type="button" data-act="reopen">Възобнови</button>'}<button class="btn danger" type="button" data-act="del">Изтрий</button></div>
+      <div class="app-actions"><button class="btn" type="button" data-act="open">Покажи изчислението</button><button class="btn" type="button" data-act="edit">Редактирай</button>${cs.k!=="closed"&&a.reg&&!a.dec?'<button class="btn" type="button" data-act="clar">Уточнение</button>':""}${cs.k!=="closed"&&!a.apd&&((a.dec&&a.dtype!=="grant")||cs.t==="Мълчалив отказ")?'<button class="btn primary" type="button" data-act="help">Заявка за съдействие</button>':""}${cs.k!=="closed"?'<button class="btn" type="button" data-act="close">Отбележи като приключена</button>':'<button class="btn" type="button" data-act="reopen">Възобнови</button>'}<button class="btn danger" type="button" data-act="del">Изтрий</button></div>
     </div></article>`}).join("");
 }
 function fillAppForm(a){
@@ -1909,6 +2028,7 @@ $("apps-list").addEventListener("click",e=>{
     clearTimeout(delArm[id]);delete delArm[id];apps=apps.filter(x=>x.id!==id);saveApps();renderApps();return;
   }
   if(b.dataset.act==="clar"){clarPick=id;location.hash="generator";return}
+  if(b.dataset.act==="help"){lgPick=id;location.hash="sadeystvie";return}
   if(b.dataset.act==="close"||b.dataset.act==="reopen"){a.closed=b.dataset.act==="close";saveApps();renderApps();return}
   if(b.dataset.act==="edit"){editId=id;fillAppForm(a);$("addapp").open=true;$("ap-save").textContent="Запази промените";$("ap-cancel").hidden=false;$("addapp").scrollIntoView({block:"start"});$("ap-body").focus({preventScroll:true});return}
   if(b.dataset.act==="open"){
@@ -2085,6 +2205,7 @@ applyA11y();
 
 /* ---------- иконки ---------- */
 const ICO={
+ scale:'<path d="M12 3v18M7 21h10M5 7h14M12 5V3"/><path d="M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/>',
  home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
  folder:'<path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
  doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/>',
@@ -2098,7 +2219,7 @@ const ICO={
 document.querySelectorAll("[data-ico]").forEach(el=>{const p=ICO[el.dataset.ico];if(p)el.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`});
 
 /* ---------- екрани ---------- */
-const VIEWS=["nachalo","srokove","prepiski","generator","subekti","taksi","profil","nastroyki","poveritelnost"];
+const VIEWS=["nachalo","srokove","prepiski","generator","subekti","taksi","sadeystvie","profil","nastroyki","poveritelnost"];
 const VIEW_T={nachalo:"Начало",srokove:"Срокове",prepiski:"Моите преписки",generator:"Ново заявление",subekti:"Задължени субекти",taksi:"Разходи за носители",profil:"Моят профил",nastroyki:"Настройки"};
 function showView(){
   const h=(location.hash||"").replace("#","");const v=VIEWS.includes(h)?h:"nachalo";
@@ -2107,7 +2228,7 @@ function showView(){
   document.querySelectorAll("[data-nav]").forEach(a=>{if(a.dataset.nav===v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
   const cur=document.querySelector(`[data-nav="${v}"]`);if(cur&&cur.scrollIntoView)cur.scrollIntoView({block:"nearest",inline:"center"});
   if(v==="nachalo")renderHome();
-  if(v==="generator")genEnter();
+  if(v==="generator")genEnter();if(v==="sadeystvie")lgEnter();
   if(v==="poveritelnost")renderPrivacy();if(v==="profil")gsPre();
   if(changed)window.scrollTo({top:0,behavior:"auto"});
   updateBar();
@@ -2734,7 +2855,7 @@ function gsUI(){
   const pill=$("gs-pill");pill.hidden=!on;
   $("gs-pill-t").textContent="Google: "+(GS.busy?"синхронизиране…":locked?"заключено":GS.err==="net"||GS.err==="403"?"грешка":!tok?"синхронизирай":GS.dirty?"предстои":"синхронизирано");
   pill.classList.toggle("warn",on&&!GS.busy&&(!tok||!!GS.err));
-  gsDevUI(on);
+  gsDevUI(on);if(typeof lgUI==="function")lgUI();
   $("gs-why").hidden=on;$("gs-promo").hidden=on||!hasConsent();
 }
 /* ---------- устройства с вход (скрит лист _devices: A – id на устройството, B – JSON) ---------- */
@@ -2851,6 +2972,127 @@ window.addEventListener("online",()=>{if(GS.email)gsSync()});
 setInterval(()=>{if(!document.hidden&&GS.email&&!GS.busy)gsSync()},90000);
 if(GS.email){gsLib().catch(()=>{});gsSync()}else if(currentView==="profil")gsPre();
 gsUI();
+/* ---------- заявка за съдействие (приема се от Apps Script към таблицата на Сдружението) ---------- */
+var LEGAL_API="";/* URL на уеб приложението от apps-script/Code.gs (…/exec) */
+var LG_MAIL="legal.crisis@zdoi4you.eu";
+var LG_ERR={auth:"Входът с Google е изтекъл. Натиснете „Вход с Google“ и опитайте отново.",limit:"Достигнахте лимита от 3 заявки за 24 часа. Ако е спешно, пишете на "+LG_MAIL+".",
+  files:"Приложете задължителните документи.",size:"Файловете са твърде големи – до 8 MB на файл и 20 MB общо.",type:"Неподдържан вид файл. Използвайте PDF, JPG, PNG, DOC, DOCX или ODT.",
+  fields:"Попълнете задължителните полета.",net:"Няма връзка със сървъра. Опитайте отново или пишете на "+LG_MAIL+"."};
+var LG_TYPES={pdf:"application/pdf",jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",doc:"application/msword",docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",odt:"application/vnd.oasis.opendocument.text"};
+const icoSvg=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICO[k]}</svg>`;
+var lgPick=null,lgBusy=false,lgItems=null;
+const lgKind=()=>(document.querySelector('input[name="lg-kind"]:checked')||{}).value||"explicit";
+function lgOn(){return !!GS.email&&!!gsTok()}
+function lgUI(){
+  if(!$("lg"))return;
+  const on=lgOn();
+  $("lg-who").hidden=!GS.email;$("lg-who").textContent=GS.email||"";
+  if(!LEGAL_API){
+    $("lg-login").hidden=false;$("lg-form").hidden=true;$("lg-mine").hidden=true;$("lg-in").hidden=true;
+    $("lg-login-t").innerHTML='Онлайн подаването предстои да бъде включено. Дотогава изпратете заявката и документите на <a href="mailto:'+LG_MAIL+'">'+LG_MAIL+'</a>.';
+    return;
+  }
+  $("lg-in").hidden=false;
+  $("lg-login").hidden=on;$("lg-form").hidden=!on;$("lg-mine").hidden=!on;
+  $("lg-in").textContent=GS.email?"Потвърди с Google":"Вход с Google";
+  $("lg-login-t").textContent=!hasConsent()?"Първо приемете условията за ползване, след това влезте с Google."
+    :GS.email?"Потвърдете входа с "+GS.email+", за да изпратите заявка или да видите заявките си."
+    :"Заявки се приемат само от потребители, влезли с Google акаунт. Така знаем кой е подал заявката и ви пишем на същия имейл.";
+}
+function lgFillCases(){
+  const cur=$("lg-case").value;
+  const list=apps.filter(a=>a.reg).sort((x,y)=>(y.reg||"").localeCompare(x.reg||""));
+  $("lg-case").innerHTML='<option value="">– Ръчно попълване –</option>'+list.map(a=>`<option value="${a.id}">${esc((a.body||"Без субект")+(a.no?", вх. № "+a.no:"")+" – "+fmt(parseISO(a.reg))+" · "+caseStatus(a).t)}</option>`).join("");
+  $("lg-case").value=list.some(a=>a.id===cur)?cur:"";
+}
+function lgPrefill(force){
+  const set=(id,v)=>{if(v&&(force||!$(id).value))$(id).value=v};
+  set("lg-name",personal.name);set("lg-phone",personal.phone);
+  const p=profile&&profile.e?placeBy(profile.e):null;if(p)set("lg-city",placeLabel(p));
+}
+function lgApplyCase(id){
+  const a=apps.find(x=>x.id===id);if(!a)return;
+  $("lg-body").value=a.body||"";$("lg-no").value=a.no||"";$("lg-reg").value=a.reg||"";$("lg-recv").value=a.dec||"";
+  const k=a.dec?(a.dtype==="grant"?"partial":"explicit"):caseStatus(a).t==="Мълчалив отказ"?"silent":null;
+  if(k)document.querySelector(`input[name="lg-kind"][value="${k}"]`).checked=true;
+  if(!$("lg-desc").value&&a.subj)$("lg-desc").value="Предмет на заявлението: "+a.subj;
+  lgSync();
+}
+/* срок за обжалване: 14 дни от съобщаване на отказа, 2 месеца при мълчалив отказ */
+function lgAppeal(){
+  const k=lgKind(),c=apps.find(x=>x.id===$("lg-case").value);
+  if(c){const s=appTerms(c).steps.find(s=>s.appeal);if(s&&(k==="silent")===!c.dec)return s.end}
+  if(k==="silent"){const r=$("lg-reg").value;return r?term(decEnd({reg:r,ext:0}),2,"m").end:null}
+  const r=$("lg-recv").value;return r?term(parseISO(r),14,"d").end:null;
+}
+function lgSync(){
+  const silent=lgKind()==="silent";
+  document.querySelectorAll("#lg-form .lg-dec").forEach(el=>el.hidden=silent);
+  const end=lgAppeal(),n=$("lg-term");
+  if(!end){n.hidden=true;return}
+  const st=status(end);n.hidden=false;n.className="note "+(end<TODAY?"bad-note":"warn-note");
+  n.textContent=end<TODAY?`Срокът за обжалване вероятно е изтекъл на ${fmt(end)}. Пак можете да подадете заявка – ще прегледаме случая.`
+    :`Срок за обжалване: ${fmt(end)} (${wd(end)}) – ${st.t.toLowerCase()}. Заявката не спира срока.`;
+}
+function lgEnter(){
+  lgFillCases();lgPrefill(false);
+  if(lgPick){$("lg-case").value=lgPick;lgApplyCase(lgPick);lgPick=null}
+  lgSync();lgUI();
+  if(lgOn()&&LEGAL_API&&!lgItems)lgList();
+}
+async function lgCall(body){
+  const r=await fetch(LEGAL_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...body,token:gsTok()})});
+  if(!r.ok)throw new Error("net");
+  return r.json();
+}
+const lgFile=f=>new Promise((ok,no)=>{const ext=(f.name.split(".").pop()||"").toLowerCase(),type=LG_TYPES[ext];if(!type)return no(new Error("type"));
+  const r=new FileReader();r.onload=()=>ok({name:f.name,type,b64:String(r.result).split(",")[1]||""});r.onerror=()=>no(new Error("net"));r.readAsDataURL(f)});
+function lgMsg(t,bad){const m=$("lg-msg");m.textContent=t;m.hidden=!t;m.classList.toggle("bad",!!bad)}
+async function lgList(){
+  if(!lgOn()||!LEGAL_API)return;
+  $("lg-list").innerHTML='<div class="apps-empty">Зареждане…</div>';
+  try{const r=await lgCall({action:"list"});if(!r.ok)throw new Error(r.error||"net");lgItems=r.items||[]}
+  catch(e){$("lg-list").innerHTML=`<div class="apps-empty">${esc(LG_ERR[e.message]||LG_ERR.net)}</div>`;return}
+  const cls=s=>/Отказана/.test(s)?"bad":/Приключена/.test(s)?"info":/Нова|В преглед/.test(s)?"warn":"ok";
+  $("lg-list").innerHTML=lgItems.length?lgItems.map(x=>`<div class="dev"><span class="dev-ico">${icoSvg("scale")}</span><div class="dev-tx"><b>${esc(x.id)} · ${esc(x.body||"")}</b><small><span class="chip ${cls(x.status)}">${esc(x.status||"Нова")}</span><span>${esc(x.kind||"")} · подадена ${x.at?fmt(new Date(x.at)):""}</span></small>${x.note?`<span class="lg-note">${esc(x.note)}</span>`:""}</div></div>`).join("")
+    :'<div class="apps-empty">Още нямате подадени заявки.</div>';
+}
+$("lg-in").addEventListener("click",()=>{
+  if(!hasConsent()){showGate(false);return}
+  if(!GS.email){$("gs-in").click();return}
+  gsAuth("").then(()=>{GS.err="";gsUI();lgList()}).catch(e=>{GS.err=e.message;gsUI()});
+});
+$("lg-refresh").addEventListener("click",()=>{if(lgOn())lgList();else lgUI()});
+$("lg-case").addEventListener("change",e=>{e.stopPropagation();lgApplyCase(e.target.value)});
+$("lg-form").addEventListener("change",e=>{e.stopPropagation();if(e.target.name==="lg-kind"||/^lg-(reg|recv)$/.test(e.target.id))lgSync()});
+$("lg-form").addEventListener("input",e=>{e.stopPropagation();if(/^lg-(reg|recv)$/.test(e.target.id))lgSync()});
+$("lg-form").addEventListener("submit",async e=>{
+  e.preventDefault();e.stopPropagation();if(lgBusy)return;
+  if(!lgOn()){lgUI();return}
+  const k=lgKind(),silent=k==="silent";
+  const req=[["lg-name","Попълнете името."],["lg-body","Посочете задължения субект."],["lg-reg","Посочете датата на регистриране."]];
+  for(const[id,t]of req)if(!$(id).value.trim()){$(id).focus();lgMsg(t,true);return}
+  const fl=[["app","lg-f-app"],["reg","lg-f-reg"],...(silent?[]:[["dec","lg-f-dec"]]),["other","lg-f-other"]];
+  for(const[kd,id]of fl)if(kd!=="other"&&!$(id).files.length){$(id).focus();lgMsg(LG_ERR.files,true);return}
+  if(!$("lg-ok1").checked||!$("lg-ok2").checked){$(!$("lg-ok1").checked?"lg-ok1":"lg-ok2").focus();lgMsg("Потвърдете двете декларации.",true);return}
+  const all=fl.flatMap(([kd,id])=>[...$(id).files].map(f=>({kd,f})));
+  if(all.some(x=>x.f.size>8*1048576)||all.reduce((s,x)=>s+x.f.size,0)>20*1048576){lgMsg(LG_ERR.size,true);return}
+  lgBusy=true;$("lg-send").disabled=true;lgMsg("Изпращане…");
+  try{
+    const files=[];for(const x of all)files.push({kind:x.kd,...await lgFile(x.f)});
+    const end=lgAppeal(),dv=id=>$(id).value?fmt(parseISO($(id).value)):"";
+    const court=courtName();
+    const data={kind:k,name:$("lg-name").value.trim(),phone:$("lg-phone").value.trim(),city:$("lg-city").value.trim()+(court?" – "+court:""),body:$("lg-body").value.trim(),
+      no:$("lg-no").value.trim(),reg:dv("lg-reg"),dec:silent?"":dv("lg-dec"),recv:silent?"":dv("lg-recv"),appeal:end?fmt(end):"",desc:$("lg-desc").value.trim()};
+    const r=await lgCall({action:"submit",data,files});
+    if(!r.ok)throw new Error(r.error||"net");
+    $("lg-form").reset();lgPrefill(true);lgSync();
+    lgMsg("Заявката е изпратена с № "+r.id+". Изпратихме потвърждение на "+GS.email+".");
+    lgList();
+  }catch(err){lgMsg(LG_ERR[err.message]||LG_ERR.net,true)}
+  finally{lgBusy=false;$("lg-send").disabled=false}
+});
+lgUI();
 updateConsentUI();renderPrivacy();
 if(hasConsent())hideGate();else showGate(false);
 window.__term=term;window.__holidays=holidays;
