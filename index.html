@@ -870,7 +870,18 @@ footer{border-top
       <fieldset class="fs2"><legend>До</legend>
         <div class="field"><label for="g-body">Задължен субект</label><select id="g-body"></select><span class="hint">Изберете от запазените или попълнете ръчно.</span></div>
         <div class="field"><label for="g-to">Адресат</label><input type="text" id="g-to" maxlength="200" placeholder="напр. Кмета на Община Плевен"></div>
-        <div class="field"><label for="g-toaddr">Адрес на субекта</label><input type="text" id="g-toaddr" maxlength="200"></div>
+        <span class="legend">Адрес на субекта</span>
+        <div class="addr-grid">
+          <div class="field a-city ac"><label for="g-t-city">Населено място</label><input type="text" id="g-t-city" maxlength="80" autocomplete="off" spellcheck="false" placeholder="напр. Бяла, обл. Варна" role="combobox" aria-expanded="false" aria-controls="g-t-city-sugg" aria-autocomplete="list"><ul class="sugg" id="g-t-city-sugg" role="listbox" hidden></ul><span class="hint" id="g-t-loc">Общината и областта се попълват автоматично.</span></div>
+          <div class="field a-zip"><label for="g-t-zip">Пощ. код</label><input type="text" id="g-t-zip" maxlength="10" inputmode="numeric"></div>
+          <div class="field a-area"><label for="g-t-area">ж.к. / кв.</label><input type="text" id="g-t-area" maxlength="80" placeholder="ж.к. Дружба"></div>
+          <div class="field a-street"><label for="g-t-street">Улица / булевард</label><input type="text" id="g-t-street" maxlength="100" placeholder="ул. Васил Левски"></div>
+          <div class="field a-no"><label for="g-t-no">№</label><input type="text" id="g-t-no" maxlength="10"></div>
+          <div class="field a-bl"><label for="g-t-bl">бл.</label><input type="text" id="g-t-bl" maxlength="10"></div>
+          <div class="field a-vh"><label for="g-t-vh">вх.</label><input type="text" id="g-t-vh" maxlength="10"></div>
+          <div class="field a-et"><label for="g-t-et">ет.</label><input type="text" id="g-t-et" maxlength="10"></div>
+          <div class="field a-ap"><label for="g-t-ap">ап.</label><input type="text" id="g-t-ap" maxlength="10"></div>
+          </div>
       </fieldset>
       <fieldset class="fs2"><legend>От</legend>
         <div class="seg" role="radiogroup" aria-label="Вид заявител">
@@ -2165,8 +2176,8 @@ function fillGenBodies(){
   $("g-body").innerHTML='<option value="">– Ръчно попълване –</option>'+bodies.slice().sort((a,b)=>a.name.localeCompare(b.name,"bg")).map(b=>`<option value="${b.id}">${esc(b.name)}</option>`).join("");
   if(bodies.some(b=>b.id===cur))$("g-body").value=cur;
 }
-function applyGenBody(id){const b=bodies.find(x=>x.id===id);if(!b)return;$("g-to").value=b.head||b.name;$("g-toaddr").value=b.addr||"";if(b.ssev&&!b.email)$("g-via").value="ssev";else if(b.email)$("g-via").value="email"}
-const GFIELDS=["g-body","g-to","g-toaddr","g-name","g-eik","g-seat","g-rep","g-outno","g-email","g-remail","g-phone","g-desc","g-place","g-date","g-via","g-case","g-cno","g-cdate","g-cmode","g-nno","g-ndate","g-nrecv","g-ctext"];
+function applyGenBody(id){const b=bodies.find(x=>x.id===id);if(!b)return;$("g-to").value=b.head||b.name;writeAddr("g-t",b.a||(b.addr?{street:b.addr}:null));if(b.ssev&&!b.email)$("g-via").value="ssev";else if(b.email)$("g-via").value="email"}
+const GFIELDS=["g-body","g-to","g-name","g-eik","g-seat","g-rep","g-outno","g-email","g-remail","g-phone","g-desc","g-place","g-date","g-via","g-case","g-cno","g-cdate","g-cmode","g-nno","g-ndate","g-nrecv","g-ctext"];
 let clarPick=null;
 function genKind(){return document.querySelector('input[name="g-kind"]:checked').value}
 function setGenKind(k){$("g-kind-"+(k==="clar"?"clar":"zay")).checked=true;updGenKind()}
@@ -2196,8 +2207,8 @@ function updGenKind(){
 function genType(){return document.querySelector('input[name="g-type"]:checked').value}
 function setGenType(v){$("g-type-"+(v==="ul"?"ul":"fl")).checked=true;updGenType()}
 function updGenType(){const ul=genType()==="ul";$("g-ul-box").hidden=!ul;$("g-name-label").textContent=ul?"Наименование":"Три имена"}
-function getGenForm(){const o={kind:genKind(),type:genType(),a:readAddr("g-a"),rmode:gReplyMode(),ssev:$("g-ssev").checked,nopub:$("g-nopub").checked,forms:[...$("g-forms").querySelectorAll("input:checked")].map(i=>i.value)};GFIELDS.forEach(id=>o[id]=$(id).value);return o}
-function setGenForm(o){fillGenCases();GFIELDS.forEach(id=>{if(id==="g-body"){fillGenBodies()}$(id).value=o&&o[id]!=null?o[id]:""});setGenType(o&&o.type);writeAddr("g-a",o&&o.a);$("g-ssev").checked=!!(o&&o.ssev);$("g-form").querySelector('[name="g-rmode"][value="'+(o&&o.rmode==="other"?"other":"same")+'"]').checked=true;updReply();$("g-nopub").checked=!!(o&&o.nopub);$("g-forms").querySelectorAll("input").forEach(i=>i.checked=o?(o.forms||[]).includes(i.value):i.value==="email");if(!o||!o["g-via"])$("g-via").value="email";if(!o||!o["g-cmode"])$("g-cmode").value="resp";setGenKind(o&&o.kind)}
+function getGenForm(){const o={kind:genKind(),type:genType(),a:readAddr("g-a"),ta:readAddr("g-t"),rmode:gReplyMode(),ssev:$("g-ssev").checked,nopub:$("g-nopub").checked,forms:[...$("g-forms").querySelectorAll("input:checked")].map(i=>i.value)};GFIELDS.forEach(id=>o[id]=$(id).value);return o}
+function setGenForm(o){fillGenCases();GFIELDS.forEach(id=>{if(id==="g-body"){fillGenBodies()}$(id).value=o&&o[id]!=null?o[id]:""});setGenType(o&&o.type);writeAddr("g-a",o&&o.a);writeAddr("g-t",o&&(o.ta||(o["g-toaddr"]?{street:o["g-toaddr"]}:null)));$("g-ssev").checked=!!(o&&o.ssev);$("g-form").querySelector('[name="g-rmode"][value="'+(o&&o.rmode==="other"?"other":"same")+'"]').checked=true;updReply();$("g-nopub").checked=!!(o&&o.nopub);$("g-forms").querySelectorAll("input").forEach(i=>i.checked=o?(o.forms||[]).includes(i.value):i.value==="email");if(!o||!o["g-via"])$("g-via").value="email";if(!o||!o["g-cmode"])$("g-cmode").value="resp";setGenKind(o&&o.kind)}
 function prefillFromProfile(force){
   const set=(id,v)=>{if(v&&(force||!$(id).value))$(id).value=v};
   if(profile&&(force||!$("g-name").value))setGenType(profile.t);
@@ -2223,7 +2234,7 @@ function genModel(){
   const kind=genKind();
   const citems=$("g-ctext").value.trim().split(/\n+/).map(s=>s.replace(/^\s*(\d+[.)]|[-•*])\s*/,"").trim()).filter(Boolean);
   const df=id=>$(id).value?fmt(parseISO($(id).value)):"";
-  return {kind,citems,caseId:$("g-case").value,cno:$("g-cno").value.trim(),cdate:df("g-cdate"),cmode:$("g-cmode").value,nno:$("g-nno").value.trim(),ndate:df("g-ndate"),nrecv:df("g-nrecv"),type:genType(),bodyName:b?b.name:"",to:$("g-to").value.trim(),toaddr:$("g-toaddr").value.trim(),name:$("g-name").value.trim(),eik:ul?$("g-eik").value.trim():"",seat:ul?$("g-seat").value.trim():"",rep:ul?$("g-rep").value.trim():"",outno:ul?$("g-outno").value.trim():"",addr:addrStr(readAddr("g-a")),email:$("g-email").value.trim(),reply:gReply(),phone:$("g-phone").value.trim(),ssev:$("g-ssev").checked,nopub:$("g-nopub").checked,forms,items,place:$("g-place").value.trim(),date:d,via:$("g-via").value,body:b};
+  return {kind,citems,caseId:$("g-case").value,cno:$("g-cno").value.trim(),cdate:df("g-cdate"),cmode:$("g-cmode").value,nno:$("g-nno").value.trim(),ndate:df("g-ndate"),nrecv:df("g-nrecv"),type:genType(),bodyName:b?b.name:"",to:$("g-to").value.trim(),toaddr:addrStr(readAddr("g-t")),name:$("g-name").value.trim(),eik:ul?$("g-eik").value.trim():"",seat:ul?$("g-seat").value.trim():"",rep:ul?$("g-rep").value.trim():"",outno:ul?$("g-outno").value.trim():"",addr:addrStr(readAddr("g-a")),email:$("g-email").value.trim(),reply:gReply(),phone:$("g-phone").value.trim(),ssev:$("g-ssev").checked,nopub:$("g-nopub").checked,forms,items,place:$("g-place").value.trim(),date:d,via:$("g-via").value,body:b};
 }
 function genParas(m){
   const P=[];const ul=m.type==="ul";
@@ -2426,7 +2437,7 @@ function renderHome(){
 }
 
 $("pd-a-other").addEventListener("change",e=>{e.stopPropagation();$("pd-a-citybox").hidden=!e.target.checked;if(e.target.checked)$("pd-a-city").focus()});
-attachPlaceAC("pd-a");attachPlaceAC("b-a");attachPlaceAC("g-a",()=>renderGen());
+attachPlaceAC("pd-a");attachPlaceAC("b-a");attachPlaceAC("g-a",()=>renderGen());attachPlaceAC("g-t",()=>renderGen());
 /* ---------- зареждане на данните ---------- */
 if(hasConsent()&&!lockOn()){loadApps();loadBodies();loadGens();try{personal=JSON.parse(store.get(PDK)||"{}")||{}}catch(e){personal={}}}
 fillPersonal();setEditing(!profile);updateLockUI();
