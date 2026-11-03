@@ -2973,7 +2973,7 @@ setInterval(()=>{if(!document.hidden&&GS.email&&!GS.busy)gsSync()},90000);
 if(GS.email){gsLib().catch(()=>{});gsSync()}else if(currentView==="profil")gsPre();
 gsUI();
 /* ---------- заявка за съдействие (приема се от Apps Script към таблицата на Сдружението) ---------- */
-var LEGAL_API="";/* URL на уеб приложението от apps-script/Code.gs (…/exec) */
+var LEGAL_API="https://script.google.com/macros/s/AKfycbwJjbM1tzlMJbIxTcwdqV_BeR_tGyrmU0KlYoUJ5_jWdN5Wm9KhmYLKecAwdQQpOVVu/exec";/* URL на уеб приложението от apps-script/Code.gs (…/exec) */
 var LG_MAIL="legal.crisis@zdoi4you.eu";
 var LG_ERR={auth:"Входът с Google е изтекъл. Натиснете „Вход с Google“ и опитайте отново.",limit:"Достигнахте лимита от 3 заявки за 24 часа. Ако е спешно, пишете на "+LG_MAIL+".",
   files:"Приложете задължителните документи.",size:"Файловете са твърде големи – до 8 MB на файл и 20 MB общо.",type:"Неподдържан вид файл. Използвайте PDF, JPG, PNG, DOC, DOCX или ODT.",
