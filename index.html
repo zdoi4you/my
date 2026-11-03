@@ -985,7 +985,18 @@ footer{border-top
           <div class="field"><label for="b-name">Наименование</label><input type="text" id="b-name" maxlength="160" placeholder="напр. Община Плевен" required></div>
           <div class="field"><label for="b-head">Ръководител / адресат</label><input type="text" id="b-head" maxlength="120" placeholder="напр. Кмета на Община Плевен"><span class="hint">Кой се посочва в „До“ на заявлението.</span></div>
         </div>
-        <div class="field"><label for="b-addr">Адрес</label><input type="text" id="b-addr" maxlength="200"></div>
+        <span class="legend">Адрес</span>
+        <div class="addr-grid">
+          <div class="field a-city ac"><label for="b-a-city">Населено място</label><input type="text" id="b-a-city" maxlength="80" autocomplete="off" spellcheck="false" placeholder="напр. Бяла, обл. Варна" role="combobox" aria-expanded="false" aria-controls="b-a-city-sugg" aria-autocomplete="list"><ul class="sugg" id="b-a-city-sugg" role="listbox" hidden></ul><span class="hint" id="b-a-loc">Общината и областта се попълват автоматично.</span></div>
+          <div class="field a-zip"><label for="b-a-zip">Пощ. код</label><input type="text" id="b-a-zip" maxlength="10" inputmode="numeric"></div>
+          <div class="field a-area"><label for="b-a-area">ж.к. / кв.</label><input type="text" id="b-a-area" maxlength="80" placeholder="ж.к. Дружба"></div>
+          <div class="field a-street"><label for="b-a-street">Улица / булевард</label><input type="text" id="b-a-street" maxlength="100" placeholder="ул. Васил Левски"></div>
+          <div class="field a-no"><label for="b-a-no">№</label><input type="text" id="b-a-no" maxlength="10"></div>
+          <div class="field a-bl"><label for="b-a-bl">бл.</label><input type="text" id="b-a-bl" maxlength="10"></div>
+          <div class="field a-vh"><label for="b-a-vh">вх.</label><input type="text" id="b-a-vh" maxlength="10"></div>
+          <div class="field a-et"><label for="b-a-et">ет.</label><input type="text" id="b-a-et" maxlength="10"></div>
+          <div class="field a-ap"><label for="b-a-ap">ап.</label><input type="text" id="b-a-ap" maxlength="10"></div>
+          </div>
         <div class="row2">
           <div class="field"><label for="b-email">Имейл за заявления по ЗДОИ</label><input type="email" id="b-email" maxlength="120"><span class="hint">Адресът по чл. 15, ал. 1, т. 4 ЗДОИ.</span></div>
           <div class="field"><label for="b-eik">ЕИК / БУЛСТАТ</label><input type="text" id="b-eik" maxlength="20"><span class="hint">По него се намира профилът на органа в ССЕВ.</span></div>
@@ -1925,8 +1936,9 @@ function attachPlaceAC(p,onPick){
   inp.addEventListener("input",e=>{
     inp.dataset.ek="";$(p+"-loc").textContent=locText(null);
     const q=norm(inp.value);if(q.length<2){close();return}
-    const st=[],inc=[];for(const pl of PLACES){const n=pl[1].toLowerCase();if(n.startsWith(q))st.push(pl);else if(n.includes(q))inc.push(pl);if(st.length>=12)break}
-    st.sort((a,b)=>a[0]-b[0]||a[1].length-b[1].length);list=st.concat(inc).slice(0,8);idx=list.length?0:-1;
+    const w=q.replace(/(^|[\s,])(област|община|обл|общ)\.?(?=[\s,]|$)/g," ").split(/[\s,]+/).filter(Boolean);
+    const st=[],inc=[],loc=[];for(const pl of PLACES){const n=pl[1].toLowerCase();if(n.startsWith(q))st.push(pl);else if(n.includes(q))inc.push(pl);else if(w.length>1&&loc.length<8){const m=MUNI[pl[2]],h=(m[0]+" "+OBL[m[1]][1]).toLowerCase();for(let i=1;i<w.length;i++){const nm=w.slice(0,i).join(" ");if(n.startsWith(nm)&&w.slice(i).every(x=>h.includes(x))){loc.push(pl);break}}}if(st.length>=12)break}
+    st.sort((a,b)=>a[0]-b[0]||a[1].length-b[1].length);list=st.concat(inc,loc).slice(0,8);idx=list.length?0:-1;
     ul.innerHTML=list.length?list.map((pl,i)=>`<li role="option"><button type="button" data-ek="${pl[3]}" class="${i===0?"on":""}" tabindex="-1"><span>${esc(placeLabel(pl))}</span><small>общ. ${esc(MUNI[pl[2]][0])}, обл. ${esc(OBL[MUNI[pl[2]][1]][1])}</small></button></li>`).join(""):'<li class="none">Няма такова населено място.</li>';
     ul.hidden=false;inp.setAttribute("aria-expanded","true");
   });
@@ -2089,8 +2101,8 @@ const BK="zdoi4you_bodies";
 let bodies=[],bEdit=null;
 function loadBodies(){try{const a=JSON.parse(store.get(BK)||"[]");bodies=Array.isArray(a)?a.filter(x=>x&&x.name):[]}catch(e){bodies=[]}}
 function saveBodies(){if(!hasConsent())return;gsDirty();if(lockOn()){writeVault();return}if(bodies.length)store.set(BK,JSON.stringify(bodies));else store.del(BK)}
-const BF={name:"b-name",head:"b-head",addr:"b-addr",email:"b-email",eik:"b-eik",phone:"b-phone",web:"b-web",note:"b-note"};
-function fillBodyForm(b){for(const[k,id]of Object.entries(BF))$(id).value=b?b[k]||"":"";$("b-ssev").checked=!!(b&&b.ssev);$("b-pitay").checked=!!(b&&b.pitay)}
+const BF={name:"b-name",head:"b-head",email:"b-email",eik:"b-eik",phone:"b-phone",web:"b-web",note:"b-note"};
+function fillBodyForm(b){for(const[k,id]of Object.entries(BF))$(id).value=b?b[k]||"":"";$("b-ssev").checked=!!(b&&b.ssev);$("b-pitay").checked=!!(b&&b.pitay);writeAddr("b-a",b?b.a||(b.addr?{street:b.addr}:null):null)}
 function bMsg(m){$("b-msg").textContent=m;$("b-msg").hidden=false;setTimeout(()=>$("b-msg").hidden=true,2200)}
 function renderBodies(){
   $("b-count").textContent=bodies.length+" "+(bodies.length===1?"запис":"записа");
@@ -2112,6 +2124,7 @@ $("b-form").addEventListener("submit",e=>{
   const name=$("b-name").value.trim();if(!name){$("b-name").focus();bMsg("Въведете наименование");return}
   const b={id:bEdit||"b"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),ssev:$("b-ssev").checked,pitay:$("b-pitay").checked};
   for(const[k,id]of Object.entries(BF))b[k]=$(id).value.trim();
+  const a=readAddr("b-a");b.a=AK2.some(k=>a[k])||a.ek?a:null;b.addr=addrStr(b.a);
   if(bEdit)bodies=bodies.map(x=>x.id===bEdit?b:x);else bodies.push(b);
   saveBodies();renderBodies();fillBodyForm(null);const was=bEdit;bEdit=null;$("b-save").textContent="Запиши субекта";$("b-cancel").hidden=true;bMsg(was?"Промените са записани":"Субектът е записан");
 });
@@ -2413,7 +2426,7 @@ function renderHome(){
 }
 
 $("pd-a-other").addEventListener("change",e=>{e.stopPropagation();$("pd-a-citybox").hidden=!e.target.checked;if(e.target.checked)$("pd-a-city").focus()});
-attachPlaceAC("pd-a");attachPlaceAC("g-a",()=>renderGen());
+attachPlaceAC("pd-a");attachPlaceAC("b-a");attachPlaceAC("g-a",()=>renderGen());
 /* ---------- зареждане на данните ---------- */
 if(hasConsent()&&!lockOn()){loadApps();loadBodies();loadGens();try{personal=JSON.parse(store.get(PDK)||"{}")||{}}catch(e){personal={}}}
 fillPersonal();setEditing(!profile);updateLockUI();
