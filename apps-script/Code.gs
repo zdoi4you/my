@@ -46,6 +46,8 @@ function setup() {
 function doPost(e) {
   try {
     const req = JSON.parse(e.postData.contents);
+    // платформата на екипа (Dela.gs) – собствена проверка на достъпа
+    if (String(req.action || '').indexOf('dela.') === 0) return out_(Dela.handle(req));
     const email = verify_(req.token);
     if (req.action === 'list') return out_({ ok: true, items: list_(email) });
     if (req.action === 'submit') return out_(submit_(email, req.data || {}, req.files || []));
