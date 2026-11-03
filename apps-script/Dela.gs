@@ -9,8 +9,15 @@
  * OAuth клиент, имейлът е потвърден). Допускат се само активните членове от лист „Екип“, а правата
  * се проверяват тук, на сървъра.
  *
- * Настройка: изпълнете веднъж setupDela(). Той създава листовете „Екип“, „Коментари“ и „Дневник“,
- * а акаунтът, който го изпълнява, става администратор.
+ * Роли:
+ *   Суперадминистратор – всичко; трие преписки и членове на екипа; управлява администраторите.
+ *   Администратор      – администрира преписките: заключва/отключва, насочва към отговорник;
+ *                        добавя и променя юристи и наблюдатели; вижда дневника.
+ *   Юрист              – обработва незаключени преписки: статус, бележка, корекция на данните, коментари.
+ *   Наблюдател         – само преглед.
+ *
+ * Настройка: изпълнете setupDela(). Тя създава листовете „Екип“, „Коментари“, „Дневник“ и колоната
+ * „Заключена“. Ако още няма суперадминистратор, акаунтът, който я изпълнява, става суперадминистратор.
  */
 const Dela = (() => {
   const CFG = {
@@ -24,28 +31,42 @@ const Dela = (() => {
     id: '№', at: 'Получена', email: 'Имейл (Google)', name: 'Име', phone: 'Телефон', city: 'Населено място',
     body: 'Задължен субект', kind: 'Вид отказ', no: 'Вх. № на заявлението', reg: 'Дата на регистриране',
     dec: 'Дата на решението', recv: 'Решението е получено на', appeal: 'Срок за обжалване', desc: 'Описание',
-    files: 'Приложения', status: 'Статус', note: 'Бележка към заявителя', owner: 'Отговорник'
+    files: 'Приложения', status: 'Статус', note: 'Бележка към заявителя', owner: 'Отговорник', locked: 'Заключена'
   };
+  /* данни от подадената заявка, които юристите могат да коригират: [макс. дължина, тип] */
+  const DATA = {
+    name: [120], phone: [40], city: [120], body: [200], kind: [0, 'kind'], no: [60],
+    reg: [10, 'date'], dec: [10, 'date'], recv: [10, 'date'], appeal: [10, 'date'], desc: [4000]
+  };
+  const KINDS = ['Изричен отказ', 'Частичен отказ', 'Мълчалив отказ'];
+  const DATES = ['reg', 'dec', 'recv', 'appeal'];
   const STATUSES = ['Нова', 'В преглед', 'Одобрена', 'Договор изпратен', 'Заведено дело', 'Отказана – изпратени насоки', 'Приключена'];
-  const ROLES = { 'Администратор': 3, 'Юрист': 2, 'Наблюдател': 1 };
+  const SUPER = 'Суперадминистратор', ADMIN = 'Администратор';
+  const ROLES = { 'Суперадминистратор': 4, 'Администратор': 3, 'Юрист': 2, 'Наблюдател': 1 };
   const TEAM_HEAD = ['Имейл', 'Име', 'Роля', 'Активен', 'Добавен', 'Добавен от'];
   const COMM_HEAD = ['Време', '№', 'Автор', 'Текст'];
   const LOG_HEAD = ['Време', 'Потребител', 'Действие', '№', 'Подробности'];
-  /* минимална роля за всяко действие */
-  const NEED = { me: 1, list: 1, get: 1, update: 2, comment: 2, team: 3, teamSave: 3, log: 3 };
+  /* минимална роля за всяко действие; по-фините проверки (заключване, отговорник, роли) са в самите действия */
+  const NEED = { me: 1, list: 1, get: 1, update: 2, comment: 2, lock: 3, team: 3, teamSave: 3, log: 3, remove: 4, teamRemove: 4 };
 
   const ss = () => SpreadsheetApp.getActiveSpreadsheet();
+  const lvl = m => ROLES[m.role] || 0;
 
   function setup() {
     const team = sheet(SH.TEAM, TEAM_HEAD);
     sheet(SH.COMM, COMM_HEAD);
     const log = sheet(SH.LOG, LOG_HEAD);
+    column(ss().getSheetByName(SH.REQ), F.locked);
     team.getRange(2, 3, team.getMaxRows() - 1, 1).setDataValidation(
       SpreadsheetApp.newDataValidation().requireValueInList(Object.keys(ROLES), true).setAllowInvalid(false).build());
     team.getRange(2, 4, team.getMaxRows() - 1, 1).setDataValidation(
       SpreadsheetApp.newDataValidation().requireValueInList(['Да', 'Не'], true).setAllowInvalid(false).build());
     const me = String(Session.getEffectiveUser().getEmail()).toLowerCase();
-    if (me && !members().some(m => m.email === me)) team.appendRow([me, '', 'Администратор', 'Да', new Date(), 'setup']);
+    const list = members(), cur = list.find(m => m.email === me);
+    if (!list.some(m => m.active && m.role === SUPER) && me) {
+      if (cur) team.getRange(cur._row, 3, 1, 2).setValues([[SUPER, 'Да']]);
+      else team.appendRow([me, '', SUPER, 'Да', new Date(), 'setup']);
+    }
     // листовете с права и одит може да редактира само собственикът на таблицата (и скриптът)
     [team, log].forEach(s => {
       const p = s.getProtections(SpreadsheetApp.ProtectionType.SHEET)[0] || s.protect();
@@ -64,18 +85,21 @@ const Dela = (() => {
       if (!me) { denied(email); return { ok: false, error: 'forbidden', email: email }; }
       const need = NEED[action];
       if (!need) return { ok: false, error: 'action' };
-      if (ROLES[me.role] < need) return { ok: false, error: 'role' };
+      if (lvl(me) < need) return { ok: false, error: 'role' };
       const d = req.data || {};
       switch (action) {
         case 'me':
           log_(me.email, 'Вход', '', '');
-          return { ok: true, me: me, statuses: STATUSES, roles: Object.keys(ROLES) };
+          return { ok: true, me: me, statuses: STATUSES, roles: Object.keys(ROLES), kinds: KINDS };
         case 'list': return { ok: true, items: items().map(brief), team: teamPublic(), comments: commentCounts() };
         case 'get': return get(String(d.id || ''));
         case 'update': return update(me, d);
         case 'comment': return comment(me, d);
+        case 'lock': return lock(me, d);
+        case 'remove': return remove(me, d);
         case 'team': return { ok: true, team: members() };
         case 'teamSave': return teamSave(me, d);
+        case 'teamRemove': return teamRemove(me, d);
         case 'log': return { ok: true, log: logList(400) };
       }
     } catch (err) {
@@ -134,21 +158,30 @@ const Dela = (() => {
       const o = { _row: i + 2 };
       Object.keys(F).forEach(k => {
         const x = ix[k] == null ? '' : r[ix[k]];
-        o[k] = k === 'at' ? date(x, true) : ['reg', 'dec', 'recv', 'appeal'].indexOf(k) >= 0 ? date(x) : String(x == null ? '' : x);
+        o[k] = k === 'at' ? date(x, true) : DATES.indexOf(k) >= 0 ? date(x) : String(x == null ? '' : x);
       });
+      o.locked = o.locked === 'Да';
       return o;
     }).filter(o => o.id);
   }
 
   function brief(o) {
     const b = {};
-    ['id', 'at', 'email', 'name', 'city', 'body', 'kind', 'appeal', 'status', 'owner'].forEach(k => b[k] = o[k]);
+    ['id', 'at', 'email', 'name', 'city', 'body', 'kind', 'appeal', 'status', 'owner', 'locked'].forEach(k => b[k] = o[k]);
     return b;
   }
 
+  function find(id) {
+    const it = items().find(o => o.id === String(id || ''));
+    if (!it) throw new Error('notfound');
+    return it;
+  }
+
+  /* заключена преписка – само за администратори */
+  const open = (me, it) => !it.locked || lvl(me) >= 3;
+
   function get(id) {
-    const it = items().find(o => o.id === id);
-    if (!it) return { ok: false, error: 'notfound' };
+    const it = find(id);
     delete it._row;
     return {
       ok: true, item: it,
@@ -158,30 +191,41 @@ const Dela = (() => {
   }
 
   function update(me, d) {
-    const lock = LockService.getScriptLock();
-    lock.waitLock(20000);
-    try {
+    return locked_(() => {
       const sh = ss().getSheetByName(SH.REQ);
       const ix = index(sh.getRange(1, 1, 1, sh.getLastColumn()).getValues()[0]);
-      const it = items().find(o => o.id === String(d.id || ''));
-      if (!it) return { ok: false, error: 'notfound' };
+      const it = find(d.id);
+      if (!open(me, it)) return { ok: false, error: 'locked' };
       const ch = {};
       if (d.status != null && d.status !== it.status) {
         if (STATUSES.indexOf(d.status) < 0) return { ok: false, error: 'status' };
         ch.status = d.status;
       }
       if (d.owner != null && d.owner !== it.owner) {
-        if (d.owner && !teamPublic().some(m => m.email === d.owner)) return { ok: false, error: 'owner' };
+        if (lvl(me) < 3) return { ok: false, error: 'role' };          // насочва само администратор
+        if (d.owner && !teamPublic().some(m => m.email === d.owner && ROLES[m.role] >= 2)) return { ok: false, error: 'owner' };
         ch.owner = d.owner;
       }
       if (d.note != null && txt(d.note, 2000) !== it.note) ch.note = txt(d.note, 2000);
+      // корекция на данните от подадената заявка
+      const fix = d.fields && typeof d.fields === 'object' ? d.fields : {};
+      for (const k of Object.keys(fix)) {
+        if (!DATA[k]) return { ok: false, error: 'fields' };
+        const v = DATA[k][1] === 'kind' ? String(fix[k]) : txt(fix[k], DATA[k][0]);
+        if (DATA[k][1] === 'kind' && KINDS.indexOf(v) < 0) return { ok: false, error: 'fields' };
+        if (DATA[k][1] === 'date' && v && !/^\d{4}-\d{2}-\d{2}$/.test(v)) return { ok: false, error: 'date' };
+        if ((k === 'name' || k === 'body') && !v) return { ok: false, error: 'fields' };
+        if (v !== it[k]) ch[k] = v;
+      }
       if (!Object.keys(ch).length) return { ok: true, changed: false };
       Object.keys(ch).forEach(k => {
         if (ix[k] == null) throw new Error('column');
-        sh.getRange(it._row, ix[k] + 1).setValue(safe(ch[k]));
+        const cell = sh.getRange(it._row, ix[k] + 1);
+        if (DATES.indexOf(k) >= 0) cell.setNumberFormat('@');           // датата да остане като текст
+        cell.setValue(safe(ch[k]));
       });
-      const label = { status: 'Статус', owner: 'Отговорник', note: 'Бележка към заявителя' };
-      Object.keys(ch).forEach(k => log_(me.email, 'Промяна: ' + label[k], it.id, k === 'note' ? ch[k] : (it[k] || '—') + ' → ' + (ch[k] || '—')));
+      Object.keys(ch).forEach(k => log_(me.email, (DATA[k] ? 'Корекция: ' : 'Промяна: ') + F[k], it.id,
+        k === 'note' || k === 'desc' ? ch[k] : (it[k] || '—') + ' → ' + (ch[k] || '—')));
 
       // промените от скрипт не задействат onStatusEdit, затова имейлът до заявителя се праща оттук
       const now = Object.assign({}, it, ch);
@@ -200,24 +244,52 @@ const Dela = (() => {
         MailApp.sendEmail({
           to: ch.owner, name: 'ЗДОИ4You – Дела',
           subject: 'Възложена ви е заявка ' + it.id,
-          body: me.email + ' ви възложи заявка за съдействие ' + it.id + ' (' + it.kind + ', ' + it.body + ').\n' +
-            (it.appeal ? 'Срок за обжалване: ' + it.appeal + '\n' : '') +
+          body: me.email + ' ви възложи заявка за съдействие ' + it.id + ' (' + now.kind + ', ' + now.body + ').\n' +
+            (now.appeal ? 'Срок за обжалване: ' + now.appeal + '\n' : '') +
             '\n' + CFG.APP_URL + '#/r/' + encodeURIComponent(it.id) + '\n'
         });
       }
       return { ok: true, changed: true, mailed: mailed };
-    } finally {
-      lock.releaseLock();
-    }
+    });
+  }
+
+  function lock(me, d) {
+    return locked_(() => {
+      const sh = ss().getSheetByName(SH.REQ);
+      const col = column(sh, F.locked);
+      const it = find(d.id), on = !!d.locked;
+      if (it.locked === on) return { ok: true, changed: false };
+      sh.getRange(it._row, col).setValue(on ? 'Да' : '');
+      log_(me.email, on ? 'Заключена' : 'Отключена', it.id, '');
+      return { ok: true, changed: true };
+    });
   }
 
   function comment(me, d) {
-    const id = String(d.id || ''), text = txt(d.text, 4000);
+    const text = txt(d.text, 4000);
     if (!text) return { ok: false, error: 'fields' };
-    if (!items().some(o => o.id === id)) return { ok: false, error: 'notfound' };
-    ss().getSheetByName(SH.COMM).appendRow([new Date(), id, me.email, safe(text)]);
-    log_(me.email, 'Коментар', id, '');
+    const it = find(d.id);
+    if (!open(me, it)) return { ok: false, error: 'locked' };
+    ss().getSheetByName(SH.COMM).appendRow([new Date(), it.id, me.email, safe(text)]);
+    log_(me.email, 'Коментар', it.id, '');
     return { ok: true };
+  }
+
+  /* изтриване на преписка (суперадминистратор): редът, коментарите; папката с документи – в кошчето на Drive */
+  function remove(me, d) {
+    return locked_(() => {
+      const it = find(d.id);
+      if (String(d.confirm || '') !== it.id) return { ok: false, error: 'confirm' };
+      let trashed = false;
+      const m = /\/folders\/([\w-]+)/.exec(it.files);
+      if (m) { try { DriveApp.getFolderById(m[1]).setTrashed(true); trashed = true; } catch (e) { /* папката липсва */ } }
+      const cs = ss().getSheetByName(SH.COMM);
+      const cv = rows(SH.COMM, COMM_HEAD);
+      for (let i = cv.length - 1; i >= 0; i--) if (cv[i][1] === it.id) cs.deleteRow(i + 2);
+      ss().getSheetByName(SH.REQ).deleteRow(it._row);
+      log_(me.email, 'Изтрита преписка', it.id, it.name + ' · ' + it.email + ' · ' + it.body + (trashed ? ' · документите са в кошчето на Drive' : ''));
+      return { ok: true };
+    });
   }
 
   function commentCounts() {
@@ -228,20 +300,22 @@ const Dela = (() => {
 
   /* ---------- екип ---------- */
 
+  /* администраторът управлява само юристи и наблюдатели; суперадминистраторът – всички */
+  const manages = (me, role) => lvl(me) >= 4 || (ROLES[role] || 0) < 3;
+
   function teamSave(me, d) {
     const email = String(d.email || '').trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200) return { ok: false, error: 'email' };
     if (!ROLES[d.role]) return { ok: false, error: 'role' };
     const active = d.active !== false;
-    const lock = LockService.getScriptLock();
-    lock.waitLock(20000);
-    try {
+    return locked_(() => {
       const list = members();
       const cur = list.find(m => m.email === email);
-      // никой не си сваля сам правата и винаги остава поне един активен администратор
-      if (email === me.email && (d.role !== 'Администратор' || !active)) return { ok: false, error: 'self' };
-      const admins = list.filter(m => m.active && m.role === 'Администратор' && m.email !== email).length;
-      if (!admins && (d.role !== 'Администратор' || !active)) return { ok: false, error: 'lastadmin' };
+      if (!manages(me, d.role) || (cur && !manages(me, cur.role))) return { ok: false, error: 'role' };
+      // никой не си сваля сам правата и винаги остава поне един активен суперадминистратор
+      if (email === me.email && (d.role !== me.role || !active)) return { ok: false, error: 'self' };
+      if (cur && cur.role === SUPER && (d.role !== SUPER || !active) &&
+        !list.some(m => m.active && m.role === SUPER && m.email !== email)) return { ok: false, error: 'lastadmin' };
       const sh = ss().getSheetByName(SH.TEAM);
       const name = txt(d.name, 120);
       if (cur) {
@@ -252,9 +326,21 @@ const Dela = (() => {
         log_(me.email, 'Екип: добавен', '', email + ' – ' + d.role);
       }
       return { ok: true, team: members() };
-    } finally {
-      lock.releaseLock();
-    }
+    });
+  }
+
+  function teamRemove(me, d) {
+    const email = String(d.email || '').trim().toLowerCase();
+    if (email === me.email) return { ok: false, error: 'self' };
+    return locked_(() => {
+      const list = members();
+      const cur = list.find(m => m.email === email);
+      if (!cur) return { ok: false, error: 'notfound' };
+      if (cur.role === SUPER && !list.some(m => m.active && m.role === SUPER && m.email !== email)) return { ok: false, error: 'lastadmin' };
+      ss().getSheetByName(SH.TEAM).deleteRow(cur._row);
+      log_(me.email, 'Екип: изтрит', '', email + ' – ' + cur.role);
+      return { ok: true, team: members() };
+    });
   }
 
   /* ---------- дневник ---------- */
@@ -270,11 +356,27 @@ const Dela = (() => {
 
   /* ---------- помощни ---------- */
 
+  function locked_(fn) {
+    const l = LockService.getScriptLock();
+    l.waitLock(20000);
+    try { return fn(); } finally { l.releaseLock(); }
+  }
+
   function sheet(name, head) {
     const sh = ss().getSheetByName(name) || ss().insertSheet(name);
     if (sh.getLastRow() < 1) sh.getRange(1, 1, 1, head.length).setValues([head]).setFontWeight('bold');
     sh.setFrozenRows(1);
     return sh;
+  }
+
+  /* номер на колоната с това заглавие; ако липсва – добавя се в края */
+  function column(sh, title) {
+    const last = Math.max(sh.getLastColumn(), 1);
+    const head = sh.getRange(1, 1, 1, last).getValues()[0];
+    const i = head.indexOf(title);
+    if (i >= 0) return i + 1;
+    sh.getRange(1, last + 1).setValue(title).setFontWeight('bold');
+    return last + 1;
   }
 
   function rows(name, head) {
@@ -302,5 +404,5 @@ const Dela = (() => {
   return { handle: handle, setup: setup };
 })();
 
-/* Изпълнете веднъж от редактора: създава листовете на Дела и ви прави администратор. */
+/* Изпълнете от редактора: създава листовете и колоните на Дела; при нужда ви прави суперадминистратор. */
 function setupDela() { Dela.setup(); }

@@ -95,7 +95,11 @@ function submit_(email, d, files) {
       return { ok: false, error: 'limit' };
     }
     const year = new Date().getFullYear();
-    const seq = rows.filter(r => String(r[0]).indexOf('ЗС-' + year + '-') === 0).length + 1;
+    // броячът е в свойствата на скрипта – номерата не се повтарят и след изтриване на преписки в Дела
+    const props = PropertiesService.getScriptProperties(), ck = 'SEQ_' + year;
+    const seq = Math.max(Number(props.getProperty(ck)) || 0,
+      ...rows.map(r => /^ЗС-(\d{4})-(\d+)$/.exec(String(r[0]))).filter(m => m && +m[1] === year).map(m => +m[2]), 0) + 1;
+    props.setProperty(ck, String(seq));
     const id = 'ЗС-' + year + '-' + ('000' + seq).slice(-4);
     const root = DriveApp.getFolderById(CONFIG.FOLDER_ID || PropertiesService.getScriptProperties().getProperty('FOLDER_ID'));
     const folder = root.createFolder(id + ' – ' + txt_(d.name, 60));
