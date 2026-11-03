@@ -94,14 +94,8 @@ function submit_(email, d, files) {
     if (rows.filter(r => r[COL['Имейл (Google)'] - 1] === email && new Date(r[1]).getTime() > day).length >= CONFIG.MAX_PER_DAY) {
       return { ok: false, error: 'limit' };
     }
-    const year = new Date().getFullYear();
-    // броячът е в свойствата на скрипта – номерата не се повтарят и след изтриване на преписки в Дела
-    const props = PropertiesService.getScriptProperties(), ck = 'SEQ_' + year;
-    const seq = Math.max(Number(props.getProperty(ck)) || 0,
-      ...rows.map(r => /^ЗС-(\d{4})-(\d+)$/.exec(String(r[0]))).filter(m => m && +m[1] === year).map(m => +m[2]), 0) + 1;
-    props.setProperty(ck, String(seq));
-    const id = 'ЗС-' + year + '-' + ('000' + seq).slice(-4);
-    const root = DriveApp.getFolderById(CONFIG.FOLDER_ID || PropertiesService.getScriptProperties().getProperty('FOLDER_ID'));
+    const id = nextId_(rows);
+    const root = rootFolder_();
     const folder = root.createFolder(id + ' – ' + txt_(d.name, 60));
     blobs.forEach(b => folder.createFile(b));
     const row = [id, new Date(), email, txt_(d.name, 120), txt_(d.phone, 40), txt_(d.city, 120), txt_(d.body, 200), KIND[kind],
@@ -127,6 +121,23 @@ function submit_(email, d, files) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/* следващ № ЗС-ГГГГ-NNNN (rows – редовете от лист „Заявки“, № е в първата колона). Използва се и от Дела.
+ * Броячът е в свойствата на скрипта – номерата не се повтарят и след изтриване на преписки. Викайте под LockService. */
+function nextId_(rows) {
+  const year = new Date().getFullYear();
+  const props = PropertiesService.getScriptProperties(), ck = 'SEQ_' + year;
+  let seq = Number(props.getProperty(ck)) || 0;
+  rows.forEach(r => { const m = /^ЗС-(\d{4})-(\d+)$/.exec(String(r[0])); if (m && +m[1] === year && +m[2] > seq) seq = +m[2]; });
+  seq++;
+  props.setProperty(ck, String(seq));
+  return 'ЗС-' + year + '-' + ('000' + seq).slice(-4);
+}
+
+/* папката в Drive, в която се създават папките на заявките */
+function rootFolder_() {
+  return DriveApp.getFolderById(CONFIG.FOLDER_ID || PropertiesService.getScriptProperties().getProperty('FOLDER_ID'));
 }
 
 function list_(email) {

@@ -13,8 +13,13 @@
  *   Суперадминистратор – всичко; трие преписки и членове на екипа; управлява администраторите.
  *   Администратор      – администрира преписките: заключва/отключва, насочва към отговорник;
  *                        добавя и променя юристи и наблюдатели; вижда дневника.
- *   Юрист              – обработва незаключени преписки: статус, бележка, корекция на данните, коментари.
+ *   Юрист              – обработва незаключени преписки: статус, бележка, корекция на данните, коментари;
+ *                        създава ръчно заявки (получени по имейл, телефон, на място).
  *   Наблюдател         – само преглед.
+ * Всички членове пишат съобщения до администраторите (лист „Съобщения“); администраторите отговарят.
+ *
+ * Сесия: 30 минути от входа, проверява се на сървъра (CacheService). Удължава се с потвърждение;
+ * след изтичане токенът не се приема повече и е нужен нов вход с Google.
  *
  * Настройка: изпълнете setupDela(). Тя създава листовете „Екип“, „Коментари“, „Дневник“ и колоната
  * „Заключена“. Ако още няма суперадминистратор, акаунтът, който я изпълнява, става суперадминистратор.
@@ -24,14 +29,15 @@ const Dela = (() => {
     CLIENT_ID: '838853307992-dv64og2iil0q6fqjgu293006ulc50r5q.apps.googleusercontent.com',
     NOTIFY: 'legal.crisis@zdoi4you.eu',
     APP_URL: 'https://dela.zdoi4you.eu/',
-    TZ: 'Europe/Sofia'
+    TZ: 'Europe/Sofia',
+    SESSION_MIN: 30
   };
-  const SH = { REQ: 'Заявки', TEAM: 'Екип', COMM: 'Коментари', LOG: 'Дневник' };
+  const SH = { REQ: 'Заявки', TEAM: 'Екип', COMM: 'Коментари', LOG: 'Дневник', MSG: 'Съобщения' };
   const F = {
     id: '№', at: 'Получена', email: 'Имейл (Google)', name: 'Име', phone: 'Телефон', city: 'Населено място',
     body: 'Задължен субект', kind: 'Вид отказ', no: 'Вх. № на заявлението', reg: 'Дата на регистриране',
     dec: 'Дата на решението', recv: 'Решението е получено на', appeal: 'Срок за обжалване', desc: 'Описание',
-    files: 'Приложения', status: 'Статус', note: 'Бележка към заявителя', owner: 'Отговорник', locked: 'Заключена'
+    files: 'Приложения', status: 'Статус', note: 'Бележка към заявителя', owner: 'Отговорник', locked: 'Заключена', src: 'Източник'
   };
   /* данни от подадената заявка, които юристите могат да коригират: [макс. дължина, тип] */
   const DATA = {
@@ -46,8 +52,13 @@ const Dela = (() => {
   const TEAM_HEAD = ['Имейл', 'Име', 'Роля', 'Активен', 'Добавен', 'Добавен от'];
   const COMM_HEAD = ['Време', '№', 'Автор', 'Текст'];
   const LOG_HEAD = ['Време', 'Потребител', 'Действие', '№', 'Подробности'];
+  const MSG_HEAD = ['ID', 'Време', 'От', 'До', '№', 'Текст', 'Прочетено от'];
+  const ADMINS = 'admins';
   /* минимална роля за всяко действие; по-фините проверки (заключване, отговорник, роли) са в самите действия */
-  const NEED = { me: 1, list: 1, get: 1, update: 2, comment: 2, lock: 3, team: 3, teamSave: 3, log: 3, remove: 4, teamRemove: 4 };
+  const NEED = {
+    me: 1, extend: 1, logout: 1, list: 1, get: 1, msgList: 1, msgSend: 1, msgRead: 1,
+    update: 2, comment: 2, create: 2, lock: 3, team: 3, teamSave: 3, log: 3, remove: 4, teamRemove: 4
+  };
 
   const ss = () => SpreadsheetApp.getActiveSpreadsheet();
   const lvl = m => ROLES[m.role] || 0;
@@ -55,8 +66,10 @@ const Dela = (() => {
   function setup() {
     const team = sheet(SH.TEAM, TEAM_HEAD);
     sheet(SH.COMM, COMM_HEAD);
+    sheet(SH.MSG, MSG_HEAD);
     const log = sheet(SH.LOG, LOG_HEAD);
     column(ss().getSheetByName(SH.REQ), F.locked);
+    column(ss().getSheetByName(SH.REQ), F.src);
     team.getRange(2, 3, team.getMaxRows() - 1, 1).setDataValidation(
       SpreadsheetApp.newDataValidation().requireValueInList(Object.keys(ROLES), true).setAllowInvalid(false).build());
     team.getRange(2, 4, team.getMaxRows() - 1, 1).setDataValidation(
@@ -87,11 +100,31 @@ const Dela = (() => {
       if (!need) return { ok: false, error: 'action' };
       if (lvl(me) < need) return { ok: false, error: 'role' };
       const d = req.data || {};
+      const s = session(req.token), now = Date.now();
+      if (action === 'me') {
+        if (s.exp && s.exp < now) return { ok: false, error: 'session' };   // изтекла сесия не се подновява със същия токен
+        if (!s.exp) {
+          s.exp = now + CFG.SESSION_MIN * 60e3; s.save();
+          log_(me.email, d.renew ? 'Удължена сесия (нов вход с Google)' : 'Вход', '', '');
+        }
+        return { ok: true, me: me, statuses: STATUSES, roles: Object.keys(ROLES), kinds: KINDS, session: s.exp, now: now };
+      }
+      if (!s.exp || s.exp < now) return { ok: false, error: 'session' };
       switch (action) {
-        case 'me':
-          log_(me.email, 'Вход', '', '');
-          return { ok: true, me: me, statuses: STATUSES, roles: Object.keys(ROLES), kinds: KINDS };
-        case 'list': return { ok: true, items: items().map(brief), team: teamPublic(), comments: commentCounts() };
+        case 'extend':
+          s.exp = now + CFG.SESSION_MIN * 60e3; s.save();
+          log_(me.email, 'Удължена сесия', '', '');
+          return { ok: true, session: s.exp, now: now };
+        case 'logout':
+          s.exp = 1; s.save();
+          log_(me.email, d.auto ? 'Автоматичен изход (изтекла сесия)' : 'Изход', '', '');
+          return { ok: true };
+        case 'list':
+          return { ok: true, items: items().map(brief), team: teamPublic(), comments: commentCounts(), unread: messages(me).filter(m => !m.read).length };
+        case 'create': return create(me, d);
+        case 'msgList': return { ok: true, messages: messages(me) };
+        case 'msgSend': return msgSend(me, d);
+        case 'msgRead': return msgRead(me, d);
         case 'get': return get(String(d.id || ''));
         case 'update': return update(me, d);
         case 'comment': return comment(me, d);
@@ -112,7 +145,7 @@ const Dela = (() => {
   /* Google access token → потвърден имейл; резултатът се кешира до 10 мин. */
   function verify(token) {
     if (!token || typeof token !== 'string' || token.length > 4096) throw new Error('auth');
-    const key = 't' + Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, token));
+    const key = 't' + tokenKey(token);
     const cache = CacheService.getScriptCache();
     const hit = cache.get(key);
     if (hit) return hit;
@@ -124,6 +157,16 @@ const Dela = (() => {
     const ttl = Math.min(600, Number(t.expires_in) || 0);
     if (ttl > 30) cache.put(key, email, ttl);
     return email;
+  }
+
+  const tokenKey = token => Utilities.base64EncodeWebSafe(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, token));
+
+  /* сесия към токена: exp = край в ms (1 = прекратена); пази се 6 ч. – повече от живота на токена */
+  function session(token) {
+    const c = CacheService.getScriptCache(), k = 's' + tokenKey(token);
+    const o = { exp: Number(c.get(k)) || 0 };
+    o.save = () => c.put(k, String(o.exp), 21600);
+    return o;
   }
 
   /* отказан достъп – записва се в дневника най-много веднъж на 10 мин. за акаунт */
@@ -287,6 +330,12 @@ const Dela = (() => {
       const cv = rows(SH.COMM, COMM_HEAD);
       for (let i = cv.length - 1; i >= 0; i--) if (cv[i][1] === it.id) cs.deleteRow(i + 2);
       ss().getSheetByName(SH.REQ).deleteRow(it._row);
+      // броячът на номерата да не слезе под изтрития № – номерът не се дава повторно
+      const n = /^ЗС-(\d{4})-(\d+)$/.exec(it.id);
+      if (n) {
+        const props = PropertiesService.getScriptProperties(), ck = 'SEQ_' + n[1];
+        if ((Number(props.getProperty(ck)) || 0) < +n[2]) props.setProperty(ck, n[2].replace(/^0+/, '') || '0');
+      }
       log_(me.email, 'Изтрита преписка', it.id, it.name + ' · ' + it.email + ' · ' + it.body + (trashed ? ' · документите са в кошчето на Drive' : ''));
       return { ok: true };
     });
@@ -296,6 +345,99 @@ const Dela = (() => {
     const c = {};
     rows(SH.COMM, COMM_HEAD).forEach(r => c[r[1]] = (c[r[1]] || 0) + 1);
     return c;
+  }
+
+  /* ръчно въведена заявка (получена по имейл, телефон, на място) */
+  function create(me, d) {
+    const v = {}, f = d.fields || {};
+    for (const k of Object.keys(DATA)) {
+      const x = DATA[k][1] === 'kind' ? String(f[k] || '') : txt(f[k], DATA[k][0]);
+      if (DATA[k][1] === 'date' && x && !/^\d{4}-\d{2}-\d{2}$/.test(x)) return { ok: false, error: 'date' };
+      v[k] = x;
+    }
+    if (!v.name || !v.body || KINDS.indexOf(v.kind) < 0) return { ok: false, error: 'fields' };
+    const email = String(d.email || '').trim().toLowerCase();
+    if (email && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 200)) return { ok: false, error: 'email' };
+    return locked_(() => {
+      const sh = ss().getSheetByName(SH.REQ);
+      column(sh, F.locked); column(sh, F.src);
+      const all = sh.getDataRange().getValues(), head = all[0], ix = index(head);
+      const id = nextId_(all.slice(1));                                    // общият брояч от Code.gs
+      let url = '';
+      try { url = rootFolder_().createFolder(id + ' – ' + v.name.slice(0, 60)).getUrl(); } catch (e) { /* без папка */ }
+      const o = Object.assign({}, v, {
+        id: id, at: new Date(), email: email, files: url, status: STATUSES[0], note: '', owner: '', locked: '',
+        src: 'Ръчно въведена от ' + me.email
+      });
+      const row = head.map(() => '');
+      Object.keys(o).forEach(k => { if (ix[k] != null) row[ix[k]] = safe(o[k]); });
+      sh.appendRow(row);
+      // датите да останат като текст ГГГГ-ММ-ДД
+      DATES.forEach(k => { if (ix[k] != null) sh.getRange(sh.getLastRow(), ix[k] + 1).setNumberFormat('@').setValue(v[k]); });
+      log_(me.email, 'Ръчно създадена', id, v.kind + ' · ' + v.body + ' · ' + v.name);
+      if (d.notify && email) {
+        MailApp.sendEmail({
+          to: email, replyTo: CFG.NOTIFY, name: 'ЗДОИ4You',
+          subject: 'Регистрирахме вашата заявка за съдействие ' + id,
+          body: 'Здравейте,\n\nРегистрирахме заявката ви за съдействие с № ' + id + ' (' + v.kind + ', ' + v.body + ').\n\n' +
+            'Екипът ни ще прецени правната основателност на случая и ще ви пише на този имейл.\n\n' +
+            'Важно: заявката не спира сроковете за обжалване. Ако срокът изтича скоро, обжалвайте сами, за да не го пропуснете.\n\n' +
+            'Сдружение „Просвета за демокрация“\n' + CFG.NOTIFY
+        });
+        log_(me.email, 'Имейл до заявителя', id, 'потвърждение');
+      }
+      return { ok: true, id: id };
+    });
+  }
+
+  /* ---------- съобщения ---------- */
+
+  /* видими: мои, до мен и – за администраторите – до „администраторите“ */
+  function messages(me) {
+    return rows(SH.MSG, MSG_HEAD)
+      .filter(r => r[2] === me.email || r[3] === me.email || (r[3] === ADMINS && lvl(me) >= 3))
+      .slice(-300).reverse()
+      .map(r => ({
+        id: r[0], at: date(r[1], true), from: r[2], to: r[3], case: r[4], text: r[5],
+        read: r[2] === me.email || String(r[6]).split(',').indexOf(me.email) >= 0
+      }));
+  }
+
+  function msgSend(me, d) {
+    const text = txt(d.text, 4000);
+    if (!text) return { ok: false, error: 'fields' };
+    const team = teamPublic();
+    let to = ADMINS;
+    if (lvl(me) >= 3 && d.to && d.to !== ADMINS) {                        // администраторът отговаря на конкретен член
+      if (!team.some(m => m.email === d.to)) return { ok: false, error: 'owner' };
+      to = d.to;
+    }
+    const cid = String(d.case || '');
+    if (cid && !items().some(o => o.id === cid)) return { ok: false, error: 'notfound' };
+    sheet(SH.MSG, MSG_HEAD).appendRow([Utilities.getUuid().slice(0, 8), new Date(), me.email, to, cid, safe(text), '']);
+    log_(me.email, 'Съобщение', cid, to === ADMINS ? 'до администраторите' : 'до ' + to);
+    const rcpt = to === ADMINS ? team.filter(m => ROLES[m.role] >= 3 && m.email !== me.email).map(m => m.email) : [to];
+    if (rcpt.length) {
+      MailApp.sendEmail({
+        to: rcpt.join(','), replyTo: me.email, name: 'ЗДОИ4You – Дела',
+        subject: 'Ново съобщение в Дела от ' + me.email + (cid ? ' (' + cid + ')' : ''),
+        body: text + '\n\n—\nОтговорете в платформата: ' + CFG.APP_URL + '#/messages'
+      });
+    }
+    return { ok: true };
+  }
+
+  function msgRead(me, d) {
+    const ids = Array.isArray(d.ids) ? d.ids.map(String) : [];
+    if (!ids.length) return { ok: true };
+    const sh = ss().getSheetByName(SH.MSG);
+    rows(SH.MSG, MSG_HEAD).forEach((r, i) => {
+      if (ids.indexOf(String(r[0])) < 0 || r[2] === me.email) return;
+      if (!(r[3] === me.email || (r[3] === ADMINS && lvl(me) >= 3))) return;
+      const read = String(r[6] || '').split(',').filter(Boolean);
+      if (read.indexOf(me.email) < 0) sh.getRange(i + 2, 7).setValue(read.concat(me.email).join(','));
+    });
+    return { ok: true };
   }
 
   /* ---------- екип ---------- */
@@ -393,7 +535,7 @@ const Dela = (() => {
   }
 
   function date(v, time) {
-    if (v instanceof Date && !isNaN(v)) return Utilities.formatDate(v, CFG.TZ, time ? "yyyy-MM-dd'T'HH:mm" : 'yyyy-MM-dd');
+    if (v instanceof Date && !isNaN(v)) return Utilities.formatDate(v, CFG.TZ, time ? "yyyy-MM-dd'T'HH:mm:ss" : 'yyyy-MM-dd');
     return String(v == null ? '' : v);
   }
 
